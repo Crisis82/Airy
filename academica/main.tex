@@ -1,54 +1,80 @@
-% the option beamer without any argument specifies the beamber class, otherwise by default is used book
-\documentclass[]{academica}
+% CLASS OPTIONS (all optionals, order is irrelevant)
+%   - pdfa: specifies if the pdf should be of `pdfa` type
+%   - light: specifies if we want to use a lighter font
+%   - banner={banner1,banner2,...}: specifies the banners to use (order of the banner is important)
+\documentclass[light,banner={aau,uniud}]{academica}
+\usepackage{lipsum} % for dummy text in the example
 
-\title{Title \\ example}
-\author{Me}
-%\course{master degree in Artificial Intelligence and Cybersecurity}
-\supervisor{Prof.\ }
-\cosupervisor{Prof.\ \and Prof.\ }
-\tutor{Prof.\ }
-\date{}
-% \rights{}
-\contacts{}
-% \contacts{\textsc{Institute Contacts}\\
-% Universit\'a degli Studi di Udine - Dipartimento di Scienze Matematiche, Informatiche e Fisiche\\
-% Via delle Scienze, 206, 33100 Udine (IT)\\
-% +39 0432 558400\\
-% \url{https://www.dmif.uniud.it/}}
+% MANDATORY FIELDS
+\title{Title example}
+\author{Me} % or
+%\candidate{Me, but candidate}
 
-% \usepackage[a-1b]{pdfx}
-\usepackage[pdfa]{hyperref}
-
-%% --- Stili di pagina disponibili (comando \pagestyle) ---
-%% sfbig (predefinito): Apertura delle parti e dei capitoli col numero grande; titoli delle parti e dei capitoli e intestazioni di pagina in sans serif.
-%% big: Come "sfbig", solo serif.
-%% plain: Apertura delle parti e dei capitoli tradizionali di LaTeX; intestazioni di pagina come "big".
+% OPTIONAL TITLE FIELDS (if no argument is provided, it will be skipped)
+\overtitle{my course of studies}
+\supervisor{Prof.\ A}
+\cosupervisor{Prof.\ B,Prof.\ C}
+\tutor{Prof.\ D}
+\institutecontacts{\uniudcontacts}
+\authorcontacts{
+  Me myself\\
+  address 1, Random (ZZ)\\
+  +012 3456789\\
+  \href{mailto:example@email.com}{example@email.com}\\
+  \url{example.com}
+}
 
 \begin{document}
 
-\maketitle
-
 \frontmatter
 
+\maketitle
+
 \begin{dedication}
-	
+	My dedication.
 \end{dedication}
 
 \acknowledgements
 
+Example of acknowledgements.
+
 \abstract
+
+This paper has been generated to show the template structure.
 
 \tableofcontents
 
 \mainmatter
 
-\chapter{First chap}
+\chapter{First chapter}
+
+Example of different text style:
+\begin{itemize}
+  \item \textbf{Bold text}
+  \item \textit{Italic text}
+  \item \textsl{Slanted text}
+  \item \texttt{Typewrite text}
+  \item \textsc{Small Caps text}
+  \item $x + x = \sum_{i=1}^{16} x^2 \cdot 2$
+\end{itemize}
+
+\lipsum[1-4]
 
 \section{First sec}
 
+\lipsum[5-8]
+
 \subsection{Subsection}
 
+\lipsum[9]
+
+\chapter{Second Chapter Title}
+
+\lipsum[11-14]
+
 \subsubsection{SubSubsection}
+
+\lipsum[15-17]
 
 \appendix
 

@@ -1,140 +1,304 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{academica}
 
+
+\LoadClass[12pt]{book} % should be same as \LoadClass[onecolumn,twoside,12pt]{book}
+%\LoadClass[oneside,12pt]{book}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%% BASIC CLASS OPTIONS %%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Basic options without parameters
+\newif\ifacademica@pdfa
+\DeclareOption{pdfa}{\academica@pdfatrue} % class option pdfa
+\newif\ifacademica@light
+\DeclareOption{light}{\academica@lighttrue} % class option light
+\ProcessOptions\relax
+
+% Sets if the generated output should be a `pdfa`
+\ifacademica@pdfa
+  \RequirePackage[a-1b]{pdfx} % generates pdfa output
+  \RequirePackage[pdfa]{hyperref} % manage references
+\else
+  \RequirePackage{hyperref}
+\fi
+
+% Sets text to a light version of Computer Modern (default LaTex font)
+\ifacademica@light
+  \RequirePackage{cmbright}
+\else
+\fi
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% PARAMETERED CLASS OPTIONS %%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% More complex options that allow passing strings
 \RequirePackage{kvoptions}
-\SetupKeyvalOptions{prefix={\@currname @opt@}}
-\DeclareStringOption[{}]{banner}[{}]
-%\DeclareStringOption{banner}
-\ProcessKeyvalOptions{\@currname}
+\SetupKeyvalOptions{prefix={academica@}}
+\DeclareStringOption[]{banner}[] % class option banner
+\ProcessKeyvalOptions{academica}\relax
 
-\LoadClass[12pt]{book}
 
-%\newif\ifacademica@banner
-%\ifx\academica@opt@banner\@empty\else\academica@bannertrue\fi
 
-\def\academica@save#1{\expandafter\let\csname academica@save@#1\expandafter\endcsname\csname#1\endcsname}
-\def\academica@restore#1{\expandafter\let\csname#1\expandafter\endcsname\csname academica@save@#1\endcsname}
-\def\@ifplus#1{\@ifnextchar+{\@firstoftwo{#1}}}
 
-\def\academica@nonegiven#1{\ClassError{academica}{No \expandafter\string\csname#1\endcsname\space given}{Provide an \expandafter\string\csname#1\endcsname.}}
-\def\@author{\academica@nonegiven{author}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{graphicx} % allow use of \includegraphics
+\RequirePackage[a4paper]{geometry} % sets page geometry style
+\RequirePackage{xcolor} % provides palette of default colornames, plus allow definition of custom colors and rewrite of default ones
+\RequirePackage{titlesec} % easily modify appereance of chapters and sections
+% \RequirePackage[T1]{fontenc} % provides encoding of characters not provided by font
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% PAGING %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\academica@unisep{.5em}
+\def\academica@se@and{.2ex}
+\def\academica@se@qual{1ex}
+\def\academica@se@sep{2em}
+
+\geometry{%
+    hcentering,%
+    bindingoffset=.025\paperwidth,%
+    outer=.075\paperwidth,%
+    nofoot,nomarginpar,%
+    vdivide={.08\paperheight,*,.06\paperheight}%
+}
+
+% create storage for titles
+\newcommand{\chaptertitle}{}
+\newcommand{\sectiontitle}{}
+
+% update stored chapter title whenever \chapter is used
+\renewcommand{\chaptermark}[1]{
+  \markboth{#1}{}
+  \renewcommand{\chaptertitle}{#1}
+  % reset section title when a new chapter starts
+  \renewcommand{\sectiontitle}{}
+}
+
+% update stored section title whenever \section is used
+\renewcommand{\sectionmark}[1]{
+  \markright{#1}
+  \renewcommand{\sectiontitle}{#1}
+}
+
+% custom definition of header
+\def\header{
+  \ifnum\value{section}=0
+    \MakeUppercase{\chaptertitle}
+  \else
+    \MakeUppercase{\chaptertitle} \ --- \ \textit{\sectiontitle}
+  \fi
+}
+
+\let\ps@plain\ps@empty%
+
+% new page style `academica`
+\@namedef{ps@academica}{
+  %\let\@oddfoot\@empty
+  %\let\@evenfoot\@empty
+  %\let\@mkboth\markboth
+  \def\@evenhead{\thepage\hfill{\footnotesize \header}}%
+  \def\@oddhead{{\footnotesize \header}\hfill\thepage}%
+}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% ENVIRONMENT %%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\acknowledgements{\chapter*{Acknowledgements}}
+\def\abstract{\chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}}
+\def\summary{\chapter{Summary}}
+
+\newenvironment{titlelike}[1]{
+    \cleardoublepage\thispagestyle{empty}%
+    \def\academica@titlelike{#1}%
+    \vspace*{\z@\@plus.3fil}%
+    \begin{\academica@titlelike}%
+}{
+    \end{\academica@titlelike}%
+    \vspace*{\z@\@plus.6fil}%
+    \newpage\thispagestyle{empty}%
+}
+
+\newenvironment{dedication}{\begin{titlelike}{flushright}\begin{itshape}}{\end{itshape}\end{titlelike}}
+
+% custom title body:
+% chaptertitle <empty> bigchapternumber
+\newcommand{\chaptertitleformat}[1]{
+  #1
+  \hfill
+  {\fontsize{100}{60}\selectfont\textcolor{gray}{\thechapter}}
+}
+
+\newcommand{\newchapterstyle}{
+  \titleformat{\chapter}[block]
+    {\huge\bfseries} % Format of the whole line
+    {} % Label
+    {0pt} % Separation between label and title body
+    {\chaptertitleformat} % title body
+}
+
+\let\oldfrontmatter\frontmatter
+\renewcommand{\frontmatter}{
+  \pagestyle{empty}
+  \oldfrontmatter
+}
+
+\let\oldmainmatter\mainmatter
+\renewcommand{\mainmatter}{
+  \pagestyle{academica}
+  \setcounter{page}{0}
+  \oldmainmatter
+  \newchapterstyle
+}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%   TITLE   %%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 \def\@date{\begingroup\expandafter\advance\expandafter\year\ifnum\month>3 -1 \else -2 \fi\the\year-\advance\year1 \the\year\endgroup}
 
-\RequirePackage{graphicx}
-
-
-\RequirePackage{setspace}
-\RequirePackage[a4paper]{geometry}
-
-%\addto\captionsenglish{%
-\def\abstractname{Abstract}%
-\def\acknowledgementsname{Acknowledgements}%
-\def\authorcontactsname{Author's Contacts}%
-\def\candidatename{Candidate}%
-\def\chairname{Chair}%
-\def\conclusionsname{Conclusions}%
-\def\cosupervisorname{Co-Supervisor}%
-\def\cosupervisorsname{Co-Supervisors}%
-\def\cyclename{Cycle}%
-\def\datename{Academic Year}%
-\def\indexname{Index}%
-\def\institutecontactsname{Institute Contacts}%
-\def\introductionname{Introduction}%
-\def\prefacename{Preface}%
-\def\reviewername{Reviewer}%
-\def\reviewersname{Reviewers}%
-\def\shortdatename{A.Y.}%
-\def\summaryname{Summary}%
-\def\supervisorname{Supervisor}%
-\def\supervisorsname{Supervisors}%
-\def\thesisname{\ifcase\academica@target Bachelor\space\or Master\space\or Ph.D.~\fi Thesis in \\ \academica@course}%
-\def\tutorname{Tutor}%
-\def\tutorsname{Tutors}%
-%}
-
-
-\RequirePackage{pgffor}
-\RequirePackage{color}
-% \def\mylist\ifx\ifacademica@banner\@empty\else\academica@opt@banner\fi
-\gdef\academica@banner{%
-  \foreach \b in \academica@opt@banner {\includegraphics[width=\textwidth]{banners/\b.pdf}\\}
-  \ifx\academica@opt@banner\@empty \textcolor{white}{\rule{\textwidth}{40pt}}\fi%
+\def\@banner{%
+  \ifx\academica@banner\@empty%
+    \textcolor{white}{\rule{\textwidth}{40pt}}
+  \else%
+    \@for\@ban:=\academica@banner\do{\includegraphics[width=\textwidth]{banners/\@ban.pdf}\\}
+  \fi%
   \vfill
 }
-% \gdef\academica@universityAaau{%
-% 	\includegraphics[width=\textwidth]{banners\ifx\academica@opt@style\@empty\else/old\fi/banner_aau_\academica@opt@aauheader.pdf}\\
-% }
-\gdef\academica@uniud{%
+
+% Defines a new field 
+\newcommand{\deffield}[1]{%
+  % Define storage macro \@<name> (empty initially)
+  \expandafter\newcommand\csname @#1\endcsname{}%
+  % Define setter: \name{<value>} sets \@<name>
+  \expandafter\newcommand\csname #1\endcsname[1]{%
+    \expandafter\gdef\csname @#1\endcsname{##1}%
+  }%
+}
+
+% Define multiple fields by extending `\deffield`.
+% Takes a comma-separated list as input
+\newcommand{\deffields}[1]{%
+  \@for\@field:=#1\do{%
+    \expandafter\deffield\expandafter{\@field}%
+  }%
+}
+
+% Simply prints the field value after printing the field name
+\def\show#1{%
+  \if\csname @#1\endcsname\@empty
+  \else
+    \MakeUppercase{\csname #1name\endcsname}\\
+    \textit{\csname @#1\endcsname}\par
+    \vskip2em\relax
+  \fi%
+}
+
+\newcount\@numitems
+
+\newcommand{\countitems}[1]{%
+  \@numitems\z@%
+  \expandafter\@for\expandafter\@item\expandafter:\expandafter=\csname @#1\endcsname\do{\advance\@numitems\@ne}%
+}
+
+% Alternative version of `show` that use a singular/plural version of the field name
+% depending on the number of elements.
+\def\shows#1{%
+  \if\csname @#1\endcsname\@empty
+  \else
+    \countitems{#1}
+    \ifnum\the\@numitems>1
+      \MakeUppercase{\csname #1name\endcsname s}\\
+    \else
+      \MakeUppercase{\csname #1name\endcsname}\\
+    \fi
+    \expandafter\@for\expandafter\entry\expandafter:\expandafter=\csname @#1\endcsname\do{%
+      \textit{\entry}\par
+    }%
+    \vskip2em\relax
+  \fi
+}
+
+% Custom field definitions
+\deffields{overtitle,candidate,supervisor,cosupervisor,tutor,institutecontacts,authorcontacts}
+
+% Field names
+\def\authorname{Author}
+\def\candidatename{Candidate}
+\def\supervisorname{Supervisor}
+\def\cosupervisorname{Co-Supervisor}
+\def\tutorname{Tutor}
+%\def\datename{Academic Year}
+%\def\shortdatename{A.Y.}
+\def\institutecontactsname{Institute Contacts}
+\def\authorcontactsname{Author's Contacts}
+
+\gdef\uniudcontacts{
 	Universit\`a degli Studi di Udine: Dipartimento di Scienze Matematiche, Informatiche e Fisiche\\
 	Via delle Scienze, 206, 33100 Udine (IT)\\
 	+39 0432 558400\\
+  \href{mailto:info.dmif@uniud.it}{info.dmif@uniud.it}\\
 	\@ifundefined{url}\texttt\url{https://www.dmif.uniud.it/}
 }
-\gdef\academica@rights{%
-		\textcopyright\ \the\year\ \@author\\ This work is shared under the Creative Commons 4.0 License Attribution-NonCommercial-ShareAlike.%
+
+\def\@rights{%
+	\textcopyright\ \the\year\ \@author\\ This work is shared under the Creative Commons 4.0 License Attribution-NonCommercial-ShareAlike.%
 }
 
-% \def\@true{true}
-% \define@key{defentry}{long}[true]{%
-%     \def\academica@de@a{#1}%
-%     \ifx\@true\academica@de@a\let\academica@de@b\long\fi%
-% }
-% \define@key{defentry}{phd}[true]{%
-%     \def\academica@de@a{#1}%
-%     \ifx\@true\academica@de@a%
-%         \expandafter\let\csname ifacademica@de@c\expandafter\endcsname\csname ifacademica@phd\endcsname%
-%     \fi%
-% }
-% \define@key{defentry}{nonempty}[true]{%
-%     \def\academica@de@a{#1}%
-%     \ifx\@true\academica@de@a%
-%         \expandafter\let\csname ifacademica@de@d\expandafter\endcsname\csname iftrue\endcsname%
-%     \fi%
-% }
-\newcommand\academica@defentry[2][]{
-	\let\academica@de@b\relax
-	\let\ifacademica@de@c\iftrue
-	\let\ifacademica@de@d\iffalse
-    \setkeys{defentry}{#1}%
-    \ifacademica@de@d%% Either \iftrue or \iffalse
-        \@namedef{academica@#2}{\academica@nonegiven{#2}}
-    \else
-        \expandafter\let\csname academica@#2\endcsname\@empty
-    \fi
-    \expandafter\academica@de@b\ifacademica@de@c%% Either \iftrue or \ifacademica@phd
-        \@namedef{#2}##1{\expandafter\gdef\csname academica@#2\endcsname{##1}}
-    \else
-        \@namedef{#2}##1{\ClassWarning{\@currname}{\expandafter\string\csname#2\endcsname\space in non-PhD thesis}}
-    \fi%
+\def\maketitle{
+    \begin{titlepage}
+        \noindent
+        \begin{minipage}[t][\textheight][s]{\linewidth}
+        	\sffamily
+            \let\footnotesize\small
+            \let\footnoterule\relax
+            {\@banner}
+            \begin{center}
+                {\MakeUppercase{\@overtitle}\par}
+                \vskip 1em\@plus1fill\relax
+                {\Huge\bfseries\@title\par}
+                \vskip 5em\@plus1fill\relax
+                {\large%
+                    \parbox[t]{0.40\linewidth}{
+                        \shows{author}
+                        \shows{candidate}
+                    }
+                    \qquad
+                    \parbox[t]{0.40\linewidth}{
+                        \shows{supervisor}
+                        \shows{cosupervisor}
+                        \shows{tutor}
+                    }
+                }
+                \par\vskip 1em\@plus1fill\relax%
+                {\large\@date}\par
+            \end{center}
+        \end{minipage}
+    \end{titlepage}
+    {\parindent\z@\relax
+        \show{institutecontacts}
+        \show{authorcontacts}
+        \ifx\@rights\@empty\else\vfill\@rights\par\fi
+    }
 }
-% \academica@defentry{chair}
-\academica@defentry{contacts}
-\academica@defentry{cosupervisor}
-% \academica@defentry[nonempty]{course}
-% \academica@defentry[phd]{email}
-% \academica@defentry[phd]{homepage}
-% \academica@defentry[phd]{phdnumber}
-% \academica@defentry[phd]{reviewer}
-\academica@defentry{rights}
-\academica@defentry{supervisor}
-% \academica@defentry[phd]{telephone}
-% \academica@defentry[phd]{cycle}
-\academica@defentry{tutor}
-
-\newsavebox\academica@tmpbox
-\def\academica@showentry@#1#2{%
-    \expandafter\ifx\csname academica@#2\endcsname\@empty\else%
-        \def\academica@varname{\@nameuse{#2name}}%
-        #1%% Either \iftrue or \iffalse
-            \def\and{\\[\academica@se@and]\gdef\academica@varname{\@nameuse{#2sname}}}%
-        \else%
-            \let\and\@undefined
-        \fi%
-        \begin{lrbox}{\academica@tmpbox}\parbox[t]{\linewidth}{\@nameuse{academica@#2}}\end{lrbox}%
-        \textsc{\academica@varname}\\[\academica@se@qual]%
-        \usebox{\academica@tmpbox}\\[\academica@se@sep]\null%
-    \fi%
-}
-\def\academica@showentry{\@ifstar{\expandafter\academica@showentry@\noexpand\iffalse}{\expandafter\academica@showentry@\noexpand\iftrue}}
-
-\input{academica.tex}
