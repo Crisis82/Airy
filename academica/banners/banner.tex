@@ -1,21 +1,31 @@
-\documentclass[12pt, margin=6pt]{standalone}
+\documentclass[12pt, border={2pt 10pt}]{standalone}
 
 \usepackage{graphicx}
 \usepackage{xcolor}
+\usepackage{fontspec}
+
+\setmainfont[
+    Path = fonts/SofiaPro/,
+    UprightFont = *ExtraLight,
+    ItalicFont = *ExtraLight-Italic,
+    BoldFont = *Medium,
+    BoldItalicFont = *Medium-Italic,
+    Extension = .otf
+]{SofiaPro}
+
 \definecolor{aau}{HTML}{5D99BB}
 
 \begin{document}
 
 \begin{minipage}{120pt}%
-  % \includegraphics[width=\textwidth]{logos/aau.png}
-  \includegraphics[width=\textwidth]{logos/uniud.jpg}
+  \includegraphics[width=\textwidth]{logos/aau.png}
+  % \includegraphics[width=\textwidth]{logos/uniud.jpg}
 \end{minipage}
-\hspace{10pt}
+\hspace{20pt}
 \begin{minipage}{560pt}%
-  \sffamily
   \vspace*{\fill}
-  % \textbf{\textcolor{aau}{\large DEPARTMENT OF ARTIFICIAL INTELLIGENCE AND CYBERSECURITY}}
-  \textbf{\textcolor{black}{\large DEPARTMENT OF MATHEMATIC, COMPUTER SCIENCE AND PHYSICS}}
+  \textcolor{aau}{\textbf{\large DEPARTMENT OF ARTIFICIAL INTELLIGENCE AND CYBERSECURITY}}
+  % \textcolor{black}{\textbf{\large DEPARTMENT OF MATHEMATIC, COMPUTER SCIENCE AND PHYSICS}}
   \vspace*{\fill}
 \end{minipage}%
 

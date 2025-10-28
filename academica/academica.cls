@@ -8,6 +8,19 @@
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\RequirePackage{graphicx} % allow use of \includegraphics
+\RequirePackage[a4paper]{geometry} % sets page geometry style
+\RequirePackage{xcolor} % provides palette of default colornames, plus allow definition of custom colors and rewrite of default ones
+\RequirePackage{titlesec} % easily modify appereance of chapters and sections
+\RequirePackage{fontspec} % easily modify appereance of chapters and sections
+% \RequirePackage[T1]{fontenc} % provides encoding of characters not provided by font
+
+
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%% BASIC CLASS OPTIONS %%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -27,9 +40,44 @@
   \RequirePackage{hyperref}
 \fi
 
-% Sets text to a light version of Computer Modern (default LaTex font)
+% Sets text to a light font.
+% We firstly load `cmbright` that sets both text and math, to have a light math, matching the SopiaPro style.
+% Then we overwrite the text font with SofiaPro.
 \ifacademica@light
-  \RequirePackage{cmbright}
+  % Set font to use Computer Modern Bright (works also with pdfLatex)
+  \RequirePackage{cmbright} % light version of Computer Modern (default LaTex font)
+
+  % Set font to use SofiaPro (need LuaLatex/XeLatex engine)
+
+  % Sets mono font i.e. typewriter
+  \setmonofont[
+      Path = fonts/Monofur/,
+      UprightFont = *Regular,
+      ItalicFont = *Italic,
+      BoldFont = *Bold,
+      Extension = .ttf
+  ]{MonofurNerdFontMono-}
+
+  % Sets sans serif font, used by Small caps or part of title/headers
+  \setsansfont[
+      Path = fonts/SofiaPro/,
+      UprightFont = *ExtraLight,
+      ItalicFont = *ExtraLight-Italic,
+      BoldFont = *Medium,
+      BoldItalicFont = *Medium-Italic,
+      Extension = .otf
+  ]{SofiaPro}
+  
+  % Sets roman font i.e. default text font (called upright)
+  \setmainfont[
+      Path = fonts/SofiaPro/,
+      UprightFont = *ExtraLight,
+      ItalicFont = *ExtraLight-Italic,
+      BoldFont = *Medium,
+      BoldItalicFont = *Medium-Italic,
+      Extension = .otf
+  ]{SofiaPro}
+
 \else
 \fi
 
@@ -48,15 +96,16 @@
 
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%% COLORS %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\RequirePackage{graphicx} % allow use of \includegraphics
-\RequirePackage[a4paper]{geometry} % sets page geometry style
-\RequirePackage{xcolor} % provides palette of default colornames, plus allow definition of custom colors and rewrite of default ones
-\RequirePackage{titlesec} % easily modify appereance of chapters and sections
-% \RequirePackage[T1]{fontenc} % provides encoding of characters not provided by font
+\definecolor{lilla}{HTML}{B4B5EE}
+
+\colorlet{accent}{lilla!160}
+\colorlet{accentmedium}{lilla!240}
+\colorlet{accentdark}{accent!320}
+
 
 
 
@@ -111,8 +160,8 @@
   %\let\@oddfoot\@empty
   %\let\@evenfoot\@empty
   %\let\@mkboth\markboth
-  \def\@evenhead{\thepage\hfill{\footnotesize \header}}%
-  \def\@oddhead{{\footnotesize \header}\hfill\thepage}%
+  \def\@evenhead{{\footnotesize \textcolor{accentdark}{\header}}\hfill\thepage}%
+  \def\@oddhead{\thepage\hfill{\footnotesize \textcolor{accentdark}{\header}}}%
 }
 
 
@@ -121,9 +170,9 @@
 %%%%%%%% ENVIRONMENT %%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\def\acknowledgements{\chapter*{Acknowledgements}}
-\def\abstract{\chapter*{Abstract}\addcontentsline{toc}{chapter}{Abstract}}
-\def\summary{\chapter{Summary}}
+\def\acknowledgements{\chapter*{\textcolor{accentmedium}{Acknowledgements}}}
+\def\abstract{\chapter*{\textcolor{accentmedium}{Abstract}}\addcontentsline{toc}{chapter}{Abstract}}
+\def\summary{\chapter{\textcolor{accentmedium}{Summary}}}
 
 \newenvironment{titlelike}[1]{
     \cleardoublepage\thispagestyle{empty}%
@@ -143,7 +192,7 @@
 \newcommand{\chaptertitleformat}[1]{
   #1
   \hfill
-  {\fontsize{100}{60}\selectfont\textcolor{gray}{\thechapter}}
+  {\fontsize{100}{60}\selectfont\textcolor{accent}{\thechapter}}
 }
 
 \newcommand{\newchapterstyle}{
@@ -209,7 +258,7 @@
 \def\show#1{%
   \if\csname @#1\endcsname\@empty
   \else
-    \MakeUppercase{\csname #1name\endcsname}\\
+    \textcolor{accentdark}{\textsc{\csname #1name\endcsname}}\\
     \textit{\csname @#1\endcsname}\par
     \vskip2em\relax
   \fi%
@@ -229,9 +278,9 @@
   \else
     \countitems{#1}
     \ifnum\the\@numitems>1
-      \MakeUppercase{\csname #1name\endcsname s}\\
+      \textcolor{accentdark}{\textsc{\csname #1name\endcsname s}}\\
     \else
-      \MakeUppercase{\csname #1name\endcsname}\\
+      \textcolor{accentdark}{\textsc{\csname #1name\endcsname}}\\
     \fi
     \expandafter\@for\expandafter\entry\expandafter:\expandafter=\csname @#1\endcsname\do{%
       \textit{\entry}\par
@@ -271,13 +320,13 @@
         \noindent
         \begin{minipage}[t][\textheight][s]{\linewidth}
         	\sffamily
-            \let\footnotesize\small
-            \let\footnoterule\relax
+            %\let\footnotesize\small
+            %\let\footnoterule\relax
             {\@banner}
             \begin{center}
-                {\MakeUppercase{\@overtitle}\par}
+              {\textcolor{accentdark}{\textsc{\large \@overtitle}}\par}
                 \vskip 1em\@plus1fill\relax
-                {\Huge\bfseries\@title\par}
+                {\fontsize{30}{20}\selectfont\bfseries\@title\par}
                 \vskip 5em\@plus1fill\relax
                 {\large%
                     \parbox[t]{0.40\linewidth}{
