@@ -18,6 +18,33 @@
 \RequirePackage{fontspec} % easily modify appereance of chapters and sections
 % \RequirePackage[T1]{fontenc} % provides encoding of characters not provided by font
 
+% \usepackage{amsmath,amsfonts,amsthm,amssymb,mathtools,breqn}
+
+\usepackage{bookmark}
+\usepackage{hyperref}
+% \hypersetup{
+% 	colorlinks=true,
+%   % allcolors=fg,
+%   linkcolor=darkviolet,
+%   citecolor=blueb,
+% 	bookmarksnumbered=true,
+% 	bookmarksopen=true
+% }
+
+\usepackage{tikz}
+\usetikzlibrary{shadows}
+% \usepackage{pgfplots}
+% \pgfplotsset{compat=1.18}
+% \usepackage{siunitx} % units of measure
+% \usepackage{booktabs} % rearrange column and line in tabular
+% 
+% \usepackage{float}
+% \usepackage{graphicx}
+% \graphicspath{ {figures/} }
+\usepackage{caption}
+\usepackage{subcaption}
+
+\RequirePackage{tcolorbox}
 
 
 
@@ -103,8 +130,9 @@
 \definecolor{lilla}{HTML}{B4B5EE}
 
 \colorlet{accent}{lilla!160}
+\colorlet{accentlight}{lilla!30}
 \colorlet{accentmedium}{lilla!240}
-\colorlet{accentdark}{accent!320}
+\colorlet{accentdark}{lilla!320}
 
 
 
@@ -118,12 +146,12 @@
 \def\academica@se@qual{1ex}
 \def\academica@se@sep{2em}
 
-\geometry{%
-    hcentering,%
-    bindingoffset=.025\paperwidth,%
-    outer=.075\paperwidth,%
-    nofoot,nomarginpar,%
-    vdivide={.08\paperheight,*,.06\paperheight}%
+\geometry{
+    hcentering,
+    bindingoffset=.025\paperwidth,
+    outer=.075\paperwidth,
+    nofoot,nomarginpar,
+    vdivide={.08\paperheight,*,.06\paperheight}
 }
 
 % create storage for titles
@@ -175,17 +203,35 @@
 \def\summary{\chapter{\textcolor{accentmedium}{Summary}}}
 
 \newenvironment{titlelike}[1]{
-    \cleardoublepage\thispagestyle{empty}%
-    \def\academica@titlelike{#1}%
-    \vspace*{\z@\@plus.3fil}%
-    \begin{\academica@titlelike}%
+    \cleardoublepage\thispagestyle{empty}
+    \def\academica@titlelike{#1}
+    \vspace*{\z@\@plus.3fil}
+    \begin{\academica@titlelike}
 }{
-    \end{\academica@titlelike}%
-    \vspace*{\z@\@plus.6fil}%
-    \newpage\thispagestyle{empty}%
+    \end{\academica@titlelike}
+    \vspace*{\z@\@plus.6fil}
+    \newpage\thispagestyle{empty}
 }
 
 \newenvironment{dedication}{\begin{titlelike}{flushright}\begin{itshape}}{\end{itshape}\end{titlelike}}
+
+\tcbuselibrary{skins}
+% \tcbuselibrary{skins,listings,breakable}
+\newtcolorbox{accentbox}[1][]{
+  enhanced,
+  attach boxed title to top left={xshift=3mm,yshift=-3mm,yshifttext=-1mm},
+  colback=accentlight,
+  colframe=accent,
+  colbacktitle=white,
+  coltitle=accentmedium,
+  coltext=black,
+  arc=4mm,boxrule=2pt,
+  title= \textbf{Definition: \textcolor{black}{\textit{#1}}},
+  halign=flush left,
+  boxed title style={size=small,colframe=accent,arc=2mm}
+}
+
+\newenvironment{definition}[1][]{\begin{accentbox}[#1]}{\end{accentbox}}
 
 % custom title body:
 % chaptertitle <empty> bigchapternumber
@@ -224,56 +270,66 @@
 %%%%%%%%%   TITLE   %%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\def\@date{
+  \begingroup
+    \expandafter\advance
+    \expandafter\year
+    \ifnum\month>3
+      -1
+    \else
+      -2
+    \fi
+    \the\year-\advance\year1 \the\year
+  \endgroup
+}
 
-\def\@date{\begingroup\expandafter\advance\expandafter\year\ifnum\month>3 -1 \else -2 \fi\the\year-\advance\year1 \the\year\endgroup}
-
-\def\@banner{%
-  \ifx\academica@banner\@empty%
+\def\@banner{
+  \ifx\academica@banner\@empty
     \textcolor{white}{\rule{\textwidth}{40pt}}
-  \else%
+  \else
     \@for\@ban:=\academica@banner\do{\includegraphics[width=\textwidth]{banners/\@ban.pdf}\\}
-  \fi%
+  \fi
   \vfill
 }
 
 % Defines a new field 
-\newcommand{\deffield}[1]{%
+\newcommand{\deffield}[1]{
   % Define storage macro \@<name> (empty initially)
-  \expandafter\newcommand\csname @#1\endcsname{}%
+  \expandafter\newcommand\csname @#1\endcsname{}
   % Define setter: \name{<value>} sets \@<name>
-  \expandafter\newcommand\csname #1\endcsname[1]{%
-    \expandafter\gdef\csname @#1\endcsname{##1}%
-  }%
+  \expandafter\newcommand\csname #1\endcsname[1]{
+    \expandafter\gdef\csname @#1\endcsname{##1}
+  }
 }
 
 % Define multiple fields by extending `\deffield`.
 % Takes a comma-separated list as input
-\newcommand{\deffields}[1]{%
-  \@for\@field:=#1\do{%
-    \expandafter\deffield\expandafter{\@field}%
-  }%
+\newcommand{\deffields}[1]{
+  \@for\@field:=#1\do{
+    \expandafter\deffield\expandafter{\@field}
+  }
 }
 
 % Simply prints the field value after printing the field name
-\def\show#1{%
+\def\show#1{
   \if\csname @#1\endcsname\@empty
   \else
     \textcolor{accentdark}{\textsc{\csname #1name\endcsname}}\\
     \textit{\csname @#1\endcsname}\par
     \vskip2em\relax
-  \fi%
+  \fi
 }
 
 \newcount\@numitems
 
-\newcommand{\countitems}[1]{%
-  \@numitems\z@%
-  \expandafter\@for\expandafter\@item\expandafter:\expandafter=\csname @#1\endcsname\do{\advance\@numitems\@ne}%
+\newcommand{\countitems}[1]{
+  \@numitems\z@
+  \expandafter\@for\expandafter\@item\expandafter:\expandafter=\csname @#1\endcsname\do{\advance\@numitems\@ne}
 }
 
 % Alternative version of `show` that use a singular/plural version of the field name
 % depending on the number of elements.
-\def\shows#1{%
+\def\shows#1{
   \if\csname @#1\endcsname\@empty
   \else
     \countitems{#1}
@@ -282,9 +338,9 @@
     \else
       \textcolor{accentdark}{\textsc{\csname #1name\endcsname}}\\
     \fi
-    \expandafter\@for\expandafter\entry\expandafter:\expandafter=\csname @#1\endcsname\do{%
+    \expandafter\@for\expandafter\entry\expandafter:\expandafter=\csname @#1\endcsname\do{
       \textit{\entry}\par
-    }%
+    }
     \vskip2em\relax
   \fi
 }
@@ -316,38 +372,137 @@
 }
 
 \def\maketitle{
-    \begin{titlepage}
-        \noindent
-        \begin{minipage}[t][\textheight][s]{\linewidth}
-        	\sffamily
-            %\let\footnotesize\small
-            %\let\footnoterule\relax
-            {\@banner}
-            \begin{center}
-              {\textcolor{accentdark}{\textsc{\large \@overtitle}}\par}
-                \vskip 1em\@plus1fill\relax
-                {\fontsize{30}{20}\selectfont\bfseries\@title\par}
-                \vskip 5em\@plus1fill\relax
-                {\large%
-                    \parbox[t]{0.40\linewidth}{
-                        \shows{author}
-                        \shows{candidate}
-                    }
-                    \qquad
-                    \parbox[t]{0.40\linewidth}{
-                        \shows{supervisor}
-                        \shows{cosupervisor}
-                        \shows{tutor}
-                    }
-                }
-                \par\vskip 1em\@plus1fill\relax%
-                {\large\@date}\par
-            \end{center}
-        \end{minipage}
-    \end{titlepage}
-    {\parindent\z@\relax
-        \show{institutecontacts}
-        \show{authorcontacts}
-        \ifx\@rights\@empty\else\vfill\@rights\par\fi
-    }
+  \begin{titlepage}
+    \noindent
+    \begin{minipage}[t][\textheight][s]{\linewidth}
+    	\sffamily
+      {\@banner}
+      \begin{center}
+        {\textcolor{accentdark}{\textsc{\large \@overtitle}}\par}
+          \vskip 1em\@plus1fill\relax
+          {\fontsize{30}{20}\selectfont\bfseries\@title\par}
+          \vskip 5em\@plus1fill\relax
+          {\large%
+              \parbox[t]{0.40\linewidth}{
+                  \shows{author}
+                  \shows{candidate}
+              }
+              \qquad
+              \parbox[t]{0.40\linewidth}{
+                  \shows{supervisor}
+                  \shows{cosupervisor}
+                  \shows{tutor}
+              }
+          }
+          \par\vskip 1em\@plus1fill\relax%
+          {\large\@date}\par
+      \end{center}
+    \end{minipage}
+  \end{titlepage}
+  {
+    \parindent\z@\relax
+    \show{institutecontacts}
+    \show{authorcontacts}
+    \ifx\@rights\@empty\else\vfill\@rights\par\fi
+  }
 }
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%   TOC   %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand\listoffigures{%
+        \@starttoc{lof}%
+}
+
+\renewcommand\listoftables{%
+        \@starttoc{lot}%
+}
+
+\usepackage{titletoc}
+\contentsmargin{0cm}
+\titlecontents{part}[-1pc]
+{
+  \addvspace{50pt}
+	\begin{tikzpicture}[remember picture, overlay]
+		\draw[fill=accent,draw=accent,rounded corners] (-4.5,-0.2) rectangle (-0.2,0.55);
+    \pgftext[left,x=-1.6cm,y=0.15cm]{\textcolor{white}{\Large\sc\bfseries Part}};
+	\end{tikzpicture}
+  \large\sc\bfseries
+}
+{}
+{}
+{}
+\titlecontents{chapter}[5pc]
+{
+  \addvspace{30pt}
+  \ifx\thecontentslabel\@empty
+    \begin{tikzpicture}[remember picture, overlay]
+	  	\draw[fill=accent,draw=accent,rounded corners] (-3.5,-0.2) rectangle (-0.7,0.55);
+      \pgftext[left,x=-3.38cm,y=0.18cm]{\textcolor{white}{\Large\sc\bfseries Chapter}};
+    \end{tikzpicture}\large\sc\bfseries
+  \else
+	  \begin{tikzpicture}[remember picture, overlay]
+	  	\draw[fill=accent,draw=accent,rounded corners] (-3.5,-0.2) rectangle (-0.3,0.55);
+      \pgftext[left,x=-3.38cm,y=0.18cm]{\textcolor{white}{\Large\sc\bfseries Chapter\ \thecontentslabel}};
+    \end{tikzpicture}\large\sc\bfseries
+  \fi
+}
+{}
+{}
+{
+  \;\titlerule\;\large\sc\bfseries Page \thecontentspage
+	\begin{tikzpicture}[remember picture, overlay]
+		\draw[fill=black,draw=black] (4pt,0.2pt) rectangle (4,0.2pt);
+	\end{tikzpicture}
+}
+\titlecontents{section}[5pc]
+{\addvspace{2pt}}
+{\contentslabel[\thecontentslabel]{2pc}}
+{}
+{\hfill\small \thecontentspage}
+[]
+\titlecontents{subsection}[5pc]
+{\addvspace{2pt}}
+{\scriptsize$\bullet$\quad\small}
+{}
+{\hfill\small \thecontentspage}
+[]
+
+% move contents title on the right
+\renewcommand{\tableofcontents}{
+	\chapter*{
+	  \vspace*{-20\p@}
+	  \begin{tikzpicture}[remember picture, overlay]
+		  \draw[fill=accent,draw=accent,rounded corners] (12.2,-0.65) rectangle (20,1);
+		  \pgftext[right,x=16.7cm,y=0.2cm]{\color{white}\Huge\sc\bfseries \contentsname};
+	  \end{tikzpicture}}
+	\@starttoc{toc}
+}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%   BIBLIOGRAPHY   %%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage[backend=biber,style=numeric,maxbibnames=99,doi=true,eprint=true,sorting=none]{biblatex}
+\addbibresource{bib/abbrev0.bib}
+\addbibresource{bib/main.bib}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%   COMMON SHORTCUTS   %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{xspace} %add a space after only if there are no punctuation marks immediately after
+\newcommand{\ie}{\textit{i.e.}\xspace}
+\newcommand{\eg}{\textit{e.g.}\xspace}
+\newcommand{\st}{\textit{s.t.}\xspace}
+
