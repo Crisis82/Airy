@@ -2,26 +2,43 @@
 \ProvidesClass{academica}
 
 
-\LoadClass[12pt]{book} % should be same as \LoadClass[onecolumn,twoside,12pt]{book}
+\LoadClass[12pt,a4paper]{book}
 %\LoadClass[oneside,12pt]{book}
-
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\RequirePackage{graphicx} % allow use of \includegraphics
-\RequirePackage[a4paper]{geometry} % sets page geometry style
-\RequirePackage{xcolor} % provides palette of default colornames, plus allow definition of custom colors and rewrite of default ones
+
+\RequirePackage{kvoptions} % allows passing arguments to class options
+
+\RequirePackage{geometry} % sets page geometry style
 \RequirePackage{titlesec} % easily modify appereance of chapters and sections
-\RequirePackage{fontspec} % easily modify appereance of chapters and sections
-% \RequirePackage[T1]{fontenc} % provides encoding of characters not provided by font
+\RequirePackage{titletoc} % easily modify appereance of tableofcontents
 
-% \usepackage{amsmath,amsfonts,amsthm,amssymb,mathtools,breqn}
+\RequirePackage{graphicx} % allow use of \includegraphics
+\RequirePackage{float} % floating positioning for images, ..
+\RequirePackage{caption} % provide captions (images, tables, ..)
+\RequirePackage{subcaption} % provides multiple captions
 
-\usepackage{bookmark}
-\usepackage{hyperref}
+\RequirePackage[backend=biber,style=numeric,maxbibnames=99,doi=true,eprint=true,sorting=none]{biblatex} % bibliography management
+
+\RequirePackage{xcolor} % provides common colornames, plus allows definition of custom colors
+\RequirePackage{tcolorbox} % creation of colored boxes
+
+\RequirePackage{mathtools,amssymb} % math environments (equation, ..) and math symbols
+
+\RequirePackage{tikz} % creation of tikz pictures
+\usetikzlibrary{shadows} % adds shadow option into tikz pictures
+\RequirePackage{pgfplots} % extend tikz by adding plots
+\pgfplotsset{compat=1.18} % sets pgfplots compat version
+\RequirePackage{siunitx} % units of measure (seconds, ...)
+
+\RequirePackage{xspace} %provides \xspace, which adds space if no punctuation follows the commands
+
+\RequirePackage[figure,table]{totalcount} % get total occurences of figures and tables (used in TOC)
+
 % \hypersetup{
 % 	colorlinks=true,
 %   % allcolors=fg,
@@ -31,20 +48,8 @@
 % 	bookmarksopen=true
 % }
 
-\usepackage{tikz}
-\usetikzlibrary{shadows}
-% \usepackage{pgfplots}
-% \pgfplotsset{compat=1.18}
-% \usepackage{siunitx} % units of measure
-% \usepackage{booktabs} % rearrange column and line in tabular
-% 
-% \usepackage{float}
-% \usepackage{graphicx}
-% \graphicspath{ {figures/} }
-\usepackage{caption}
-\usepackage{subcaption}
+% \RequirePackage{booktabs} % rearrange column and line in tabular
 
-\RequirePackage{tcolorbox}
 
 
 
@@ -62,10 +67,29 @@
 % Sets if the generated output should be a `pdfa`
 \ifacademica@pdfa
   \RequirePackage[a-1b]{pdfx} % generates pdfa output
-  \RequirePackage[pdfa]{hyperref} % manage references
+  \RequirePackage[pdfa]{hyperref} % management of hyperlinks, plus autogeneration of bookmarks
 \else
-  \RequirePackage{hyperref}
+  \RequirePackage{hyperref} % management of hyperlinks, plus autogeneration of bookmarks
 \fi
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%% PARAMETERED CLASS OPTIONS %%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% More complex options that allow passing strings
+\SetupKeyvalOptions{prefix={academica@}}
+\DeclareStringOption[]{banner}[] % class option banner
+\ProcessKeyvalOptions{academica}\relax
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%  FONTS  %%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%
 
 % Sets text to a light font.
 % We firstly load `cmbright` that sets both text and math, to have a light math, matching the SopiaPro style.
@@ -75,6 +99,7 @@
   \RequirePackage{cmbright} % light version of Computer Modern (default LaTex font)
 
   % Set font to use SofiaPro (need LuaLatex/XeLatex engine)
+  \RequirePackage{fontspec} % allow to specify custom font
 
   % Sets mono font i.e. typewriter
   \setmonofont[
@@ -111,23 +136,20 @@
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%% PARAMETERED CLASS OPTIONS %%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% More complex options that allow passing strings
-\RequirePackage{kvoptions}
-\SetupKeyvalOptions{prefix={academica@}}
-\DeclareStringOption[]{banner}[] % class option banner
-\ProcessKeyvalOptions{academica}\relax
-
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% COLORS %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%\definecolor{white}{HTML}{F5F5F5}
+%\definecolor{black}{HTML}{1D1D1C}
+\definecolor{graydark}{HTML}{484848}
 \definecolor{lilla}{HTML}{B4B5EE}
+\definecolor{purple}{HTML}{B4B5EE}
+\definecolor{blue}{HTML}{98CEF3}
+\definecolor{deepsea}{HTML}{123499}
+\definecolor{pink}{HTML}{F7ABDC}
+\definecolor{red}{HTML}{E95678}
 
 \colorlet{accent}{lilla!160}
 \colorlet{accentlight}{lilla!30}
@@ -141,11 +163,11 @@
 %%%%%%%%%%% PAGING %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\def\academica@unisep{.5em}
-\def\academica@se@and{.2ex}
-\def\academica@se@qual{1ex}
-\def\academica@se@sep{2em}
-
+% \def\academica@unisep{.5em}
+% \def\academica@se@and{.2ex}
+% \def\academica@se@qual{1ex}
+% \def\academica@se@sep{2em}
+ 
 \geometry{
     hcentering,
     bindingoffset=.025\paperwidth,
@@ -188,8 +210,8 @@
   %\let\@oddfoot\@empty
   %\let\@evenfoot\@empty
   %\let\@mkboth\markboth
-  \def\@evenhead{{\footnotesize \textcolor{accentdark}{\header}}\hfill\thepage}%
-  \def\@oddhead{\thepage\hfill{\footnotesize \textcolor{accentdark}{\header}}}%
+  \def\@evenhead{\thepage\hfill{\footnotesize \textcolor{accentdark}{\header}}}%
+  \def\@oddhead{{\footnotesize \textcolor{accentdark}{\header}}\hfill\thepage}%
 }
 
 
@@ -217,36 +239,49 @@
 
 \tcbuselibrary{skins}
 % \tcbuselibrary{skins,listings,breakable}
-\newtcolorbox{accentbox}[1][]{
+\newtcolorbox{accentbox}[3][]{
   enhanced,
   attach boxed title to top left={xshift=3mm,yshift=-3mm,yshifttext=-1mm},
-  colback=accentlight,
-  colframe=accent,
+  colback=#3!30,
+  colframe=#3!160,
   colbacktitle=white,
-  coltitle=accentmedium,
+  coltitle=#3!240,
   coltext=black,
   arc=4mm,boxrule=2pt,
-  title= \textbf{Definition: \textcolor{black}{\textit{#1}}},
+  title=\textbf{#2}\ifx#1\@empty \else : \textit{#1}\fi,
   halign=flush left,
-  boxed title style={size=small,colframe=accent,arc=2mm}
+  boxed title style={size=small,colframe=#3!160,arc=2mm}
 }
 
-\newenvironment{definition}[1][]{\begin{accentbox}[#1]}{\end{accentbox}}
+\newenvironment{definition}[1][]{\begin{accentbox}[#1]{Definition}{lilla}}{\end{accentbox}}
+\newenvironment{note}[1][]{\begin{accentbox}[#1]{Note}{gray}}{\end{accentbox}}
 
 % custom title body:
 % chaptertitle <empty> bigchapternumber
-\newcommand{\chaptertitleformat}[1]{
+\newcommand{\chaptertitlemain}[1]{
   #1
   \hfill
   {\fontsize{100}{60}\selectfont\textcolor{accent}{\thechapter}}
 }
 
-\newcommand{\newchapterstyle}{
+\newcommand{\chaptertitleback}[1]{
+  #1
+}
+
+\newcommand{\academicachaptermain}{
   \titleformat{\chapter}[block]
     {\huge\bfseries} % Format of the whole line
     {} % Label
     {0pt} % Separation between label and title body
-    {\chaptertitleformat} % title body
+    {\chaptertitlemain} % title body
+}
+
+\newcommand{\academicachapterback}{
+  \titleformat{\chapter}[block]
+    {\huge\bfseries} % Format of the whole line
+    {} % Label
+    {0pt} % Separation between label and title body
+    {\chaptertitleback} % title body
 }
 
 \let\oldfrontmatter\frontmatter
@@ -260,7 +295,14 @@
   \pagestyle{academica}
   \setcounter{page}{0}
   \oldmainmatter
-  \newchapterstyle
+  \academicachaptermain
+}
+
+\let\oldbackmatter\backmatter
+\renewcommand{\backmatter}{
+  \pagestyle{empty}
+  \oldbackmatter
+  \academicachapterback
 }
 
 
@@ -272,9 +314,7 @@
 
 \def\@date{
   \begingroup
-    \expandafter\advance
-    \expandafter\year
-    \ifnum\month>3
+    \expandafter\advance\expandafter\year\ifnum\month>3
       -1
     \else
       -2
@@ -346,11 +386,10 @@
 }
 
 % Custom field definitions
-\deffields{overtitle,candidate,supervisor,cosupervisor,tutor,institutecontacts,authorcontacts}
+\deffields{overtitle,supervisor,cosupervisor,tutor,institutecontacts,authorcontacts}
 
 % Field names
 \def\authorname{Author}
-\def\candidatename{Candidate}
 \def\supervisorname{Supervisor}
 \def\cosupervisorname{Co-Supervisor}
 \def\tutorname{Tutor}
@@ -379,23 +418,22 @@
       {\@banner}
       \begin{center}
         {\textcolor{accentdark}{\textsc{\large \@overtitle}}\par}
-          \vskip 1em\@plus1fill\relax
-          {\fontsize{30}{20}\selectfont\bfseries\@title\par}
-          \vskip 5em\@plus1fill\relax
-          {\large%
-              \parbox[t]{0.40\linewidth}{
-                  \shows{author}
-                  \shows{candidate}
-              }
-              \qquad
-              \parbox[t]{0.40\linewidth}{
-                  \shows{supervisor}
-                  \shows{cosupervisor}
-                  \shows{tutor}
-              }
-          }
-          \par\vskip 1em\@plus1fill\relax%
-          {\large\@date}\par
+        \vskip 1em\@plus1fill\relax
+        {\fontsize{30}{20}\selectfont\bfseries\@title\par}
+        \vskip 5em\@plus1fill\relax
+        {\large
+            \parbox[t]{0.40\linewidth}{
+                \shows{author}
+            }
+            \qquad
+            \parbox[t]{0.40\linewidth}{
+                \shows{supervisor}
+                \shows{cosupervisor}
+                \shows{tutor}
+            }
+        }
+        \par\vskip 1em\@plus1fill\relax
+        {\large\@date}\par
       \end{center}
     \end{minipage}
   \end{titlepage}
@@ -414,16 +452,9 @@
 %%%%%%%%%%   TOC   %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\renewcommand\listoffigures{%
-        \@starttoc{lof}%
-}
-
-\renewcommand\listoftables{%
-        \@starttoc{lot}%
-}
-
-\usepackage{titletoc}
 \contentsmargin{0cm}
+
+% edit appereance of `part` inside toc
 \titlecontents{part}[-1pc]
 {
   \addvspace{50pt}
@@ -436,6 +467,8 @@
 {}
 {}
 {}
+
+% edit appereance of `chapter` inside toc
 \titlecontents{chapter}[5pc]
 {
   \addvspace{30pt}
@@ -459,12 +492,16 @@
 		\draw[fill=black,draw=black] (4pt,0.2pt) rectangle (4,0.2pt);
 	\end{tikzpicture}
 }
+
+% edit appereance of `section` inside toc
 \titlecontents{section}[5pc]
 {\addvspace{2pt}}
 {\contentslabel[\thecontentslabel]{2pc}}
 {}
 {\hfill\small \thecontentspage}
 []
+
+% edit appereance of `subsection` inside toc
 \titlecontents{subsection}[5pc]
 {\addvspace{2pt}}
 {\scriptsize$\bullet$\quad\small}
@@ -472,7 +509,49 @@
 {\hfill\small \thecontentspage}
 []
 
-% move contents title on the right
+% edit appereance of `figure` inside toc
+\titlecontents{figure}[5pc]
+{\addvspace{2pt}}
+{\contentslabel[\thecontentslabel]{2pc}}
+{}
+{\hfill\small \thecontentspage}
+[]
+
+% edit appereance of `table` inside toc
+\titlecontents{table}[5pc]
+{\addvspace{2pt}}
+{\contentslabel[\thecontentslabel]{2pc}}
+{}
+{\hfill\small \thecontentspage}
+[]
+
+\renewcommand{\listoffigures}{
+  {
+  \let\cleardoublepage\clearpage
+	\chapter*{
+	  \vspace*{-20\p@}
+	  \begin{tikzpicture}[remember picture, overlay]
+		  \draw[fill=accent,draw=accent,rounded corners] (10,-0.65) rectangle (20,1);
+		  \pgftext[right,x=16.7cm,y=0.2cm]{\color{white}\Huge\sc\bfseries List of Figures};
+	  \end{tikzpicture}
+  }
+  \@starttoc{lof}
+  }
+}
+
+\renewcommand{\listoftables}{
+  %\let\cleardoublepage\clearpage
+	\chapter*{
+	  \vspace*{-20\p@}
+	  \begin{tikzpicture}[remember picture, overlay]
+		  \draw[fill=accent,draw=accent,rounded corners] (10.5,-0.65) rectangle (20,1);
+		  \pgftext[right,x=16.7cm,y=0.2cm]{\color{white}\Huge\sc\bfseries List of Tables};
+	  \end{tikzpicture}
+  }
+  \@starttoc{lot}
+}
+
+% move contents title on the right then prints TOC with figures and tables
 \renewcommand{\tableofcontents}{
 	\chapter*{
 	  \vspace*{-20\p@}
@@ -481,18 +560,29 @@
 		  \pgftext[right,x=16.7cm,y=0.2cm]{\color{white}\Huge\sc\bfseries \contentsname};
 	  \end{tikzpicture}}
 	\@starttoc{toc}
+  \iftotalfigures\listoffigures\fi
+  \iftotaltables\listoftables\fi
+  \clearpage
 }
 
 
 
 
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%   BIBLIOGRAPHY   %%%%%%%
+%%%%%%%   REFERENCES   %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage[backend=biber,style=numeric,maxbibnames=99,doi=true,eprint=true,sorting=none]{biblatex}
 \addbibresource{bib/abbrev0.bib}
 \addbibresource{bib/main.bib}
+
+
+\def\references{
+  \chapter*{\textcolor{accentmedium}{Bibliography}}\addcontentsline{toc}{chapter}{Bibliography}
+  \nocite{*} % adds all bibliography entries, even not cited
+  \printbibliography[heading=none]
+}
 
 
 
@@ -501,7 +591,6 @@
 %%%%%%%%   COMMON SHORTCUTS   %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage{xspace} %add a space after only if there are no punctuation marks immediately after
 \newcommand{\ie}{\textit{i.e.}\xspace}
 \newcommand{\eg}{\textit{e.g.}\xspace}
 \newcommand{\st}{\textit{s.t.}\xspace}
