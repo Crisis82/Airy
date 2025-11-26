@@ -1,0 +1,72 @@
+% !TeX program = lualatex
+
+
+% CLASS OPTIONS (all optionals, order is irrelevant)
+%   - pdfa: specifies if the pdf should be of `pdfa` type
+%   - banner={banner1,banner2,...}: specifies the banners to use (order of the banner is important)
+%   - handout: removes the \pause
+%   - nolight: specifies if you dont want a light font (default)
+\documentclass[banner={aau}]{presenta}
+
+\title{Some simple title}
+\author{me}
+
+\subtitle{The subtitle}
+\supervisor{Prof A}
+\cosupervisor{Prof B, Prof C}
+\tutor{Prof D}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Section}
+
+\begin{frame}{Frame title}{subtitle}
+  Here's some list
+  \begin{itemize}
+    \item item 1;
+    \pause
+    \item item 2;
+    \pause
+    \item last item.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[right]{Right title}{subtitle}
+  A \textit{right sided} frame title with \textbf{enumerate}:
+  \begin{enumerate}
+    \item item 1;
+    \item item 2;
+    \item last item.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Figure example}
+  Here we import a figure
+  \begin{figure}[H]
+    \input{tikz/example.tikz}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \begin{columns}
+    \begin{column}{0.40\paperwidth}
+      \justifying
+      A example of split page
+    \end{column}
+    \hspace{10pt}
+    \begin{column}{0.50\paperwidth}
+      \justifying
+      Right side of this column environment.
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\standout{If you wanna make text standout :)}
+
+\references
+
+\end{document}
