@@ -1,0 +1,98 @@
+% !TeX program = lualatex
+
+% CLASS OPTIONS (all optionals, order is irrelevant)
+%   - pdfa: specifies if the pdf should be of `pdfa` type
+%   - banner={banner1,banner2,...}: specifies the banners to use (order of the banner is important)
+%   - handout: removes the \pause
+%   - nolight: specifies if you dont want a light font (default)
+\documentclass[banner={aau},handout]{presenta}
+
+\input{preamble.tex}
+
+\title{Some simple title}
+\author{me}
+
+\subtitle{The subtitle}
+\supervisor{Prof A}
+\cosupervisor{Prof B, Prof C}
+\tutor{Prof D}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Section}
+
+\begin{frame}{A long frame title with subtitle}{a long subtitle}
+  Here's some list
+  \begin{itemize}
+    \item first;
+    \pause
+    \item second;
+    \pause
+    \item third.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[right]{short}{sht}
+  A \textit{right sided} frame title with \textbf{enumerate}:
+  \begin{enumerate}
+    \item item 1;
+    \item second item;
+    \item last item.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Figure example}
+  Here we import a figure:
+  \begin{figure}[H]
+    \input{tikz/example.tikz}
+    \caption{An example of \texttt{tikz}.}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \begin{columns}
+    \hfill
+    \begin{column}[t]{0.40\paperwidth}
+      \justifying
+      An example of frame without title, with a split layout and a citation~\cite{example1}.
+    \end{column}
+    \hfill
+    \begin{column}[t]{0.40\paperwidth}
+      \justifying
+      All this text is justified\footnotemark, and height is adjusted on higher text level.
+    \end{column}
+    \hfill
+  \end{columns}
+  \footnotetext{simple as that}
+\end{frame}
+
+\section{Another helpful section}
+
+\begin{frame}{Math examples}
+  $0x3 + 0^3 + I_{m^\prime} - \rho^{24} = \widehat{16}$
+
+  \begin{equation*}
+    f = - 5x^3 + 7x^2z^2 + 4xy^2z + 4z^2  
+  \end{equation*}
+
+  $x^2 \notin \langle \lt{f_1}, \lt{f_2} \rangle$
+
+  \begin{definition}[\texttt{Square}]
+    The function $S: \field^2_p \rightarrow \field^2_p$ is a squaring operation followed by the addition of a pseudo-random round constant $\gamma$ and is defined as follows:
+    \begin{equation*}
+      S_i(x_L, x_R) \rightarrow \left( x_R + \frac{(x_L)^2}{\sigma} + \gamma_i, x_L \right),
+    \end{equation*}
+    % with $\sigma$ a Montgomery constant.
+    with $\sigma$ a constant.
+  \end{definition}
+\end{frame}
+
+\standout{If you wanna make text standout :)}
+
+\references
+
+\end{document}
