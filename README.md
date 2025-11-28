@@ -8,9 +8,13 @@ The classes provided in this repository are:
 
 ## Configuration
 
-To apply any of these templates, just copy the folder of class that you want to use (*e.g.*, **academica** or **presenta**) into your working folder.
-Then you just need to choose it as the used class by adding the following line at the beginning of your `main.tex` file, e.g.
+To apply any of these templates, just copy the content of class folder that you want to use (*e.g.*, **academica** or **presenta**) into your working folder.
+Then, you just need to specify it as the documentclass, e.g.
 
 ```tex
 \documentclass{academica}
 ```
+
+## Compilation
+
+It's also provided [biblatex.sh](./biblatex.sh), which is a simple bash script to compile the latex file using lualatex and biber.
