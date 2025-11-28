@@ -1,0 +1,102 @@
+% !TeX program = lualatex
+
+% CLASS OPTIONS (all optionals, order is irrelevant)
+%   - pdfa: specifies if the pdf should be of `pdfa` type
+%   - oneside: specifies if the pdf should be a single page (better for small reports)
+%   - banner={banner1,banner2,...}: specifies the banners to use (order of the banner is important)
+%   - nolight: specifies if you dont want a light font (default)
+\documentclass[banner={aau,uniud}]{academica}
+\usepackage{lipsum} % for dummy text in the example
+
+% MANDATORY FIELDS
+\title{Title example}
+\author{Me}
+
+% OPTIONAL TITLE FIELDS (if no argument is provided, it will be skipped)
+\overtitle{My course of Studies}
+\supervisor{Prof. A}
+\cosupervisor{Prof. B,Prof. C}
+\tutor{Prof. D}
+\institutecontacts{\uniudcontacts}
+\authorcontacts{
+  Me myself\\
+  address 1, Random (ZZ)\\
+  +012 3456789\\
+  \href{mailto:example@email.com}{example@email.com}\\
+  \url{example.com}
+}
+\rights{\commonrights}
+
+\begin{document}
+
+\frontmatter
+
+\maketitle
+
+\begin{dedication}
+	My dedication.
+\end{dedication}
+
+\acknowledgements
+
+Example of acknowledgements.
+
+\abstract
+
+This paper has been generated to show the template structure.
+
+\tableofcontents
+
+\mainmatter
+
+\chapter{First chapter}
+
+Example of different text style:
+\begin{itemize}
+  \item \textbf{Bold text}
+  \item \textit{Italic text}
+  \item \textsl{Slanted text}
+  \item \texttt{Typewrite text}
+  \item \textsc{Small Caps text}
+  \item $x + x = \sum_{i=1}^{16} x^2 \cdot 2$
+\end{itemize}
+
+\lipsum[1-4]
+
+\section{First sec}
+
+\lipsum[5-8]
+
+\subsection{Subsection}
+
+\lipsum[9]
+
+\chapter{Second Chapter Title}
+
+\lipsum[11-14]
+
+\subsubsection{SubSubsection}
+
+\lipsum[15-17]
+
+\begin{definition}[mydef]
+  A simple definition.
+\end{definition}
+
+\begin{figure}
+  \caption{A figure}
+\end{figure}
+
+\begin{table}
+  \caption{A table}
+\end{table}
+
+\appendix
+
+\chapter{First chap of appendix}
+
+\backmatter
+
+\references
+
+\end{document}
