@@ -407,37 +407,41 @@
 }
 
 \def\maketitle{
-  \begin{titlepage}
-    \noindent
-    \begin{minipage}[t][\textheight][s]{\linewidth}
-      {\@banner}
-      \begin{center}
-        {\textcolor{accentdark}{\textsc{\large \@overtitle}}\par}
-        \vskip 1em\@plus1fill\relax
-        {\fontsize{30}{20}\selectfont\bfseries\@title\par}
-        \vskip 3em\relax
-        {\Large\textsi{\@subtitle}\par}
-        \vskip 5em\@plus1fill\relax
-        {\large
-          \ifx\@author\@empty
-            \shows{author}
-          \else
-            \parbox[t]{0.40\linewidth}{
+  \newgeometry{centering}
+    \begin{titlepage}
+      \noindent
+      \begin{minipage}[t][\textheight][s]{\linewidth}
+        \begin{center}
+          {\@banner}
+          {\textcolor{accentdark}{\textsc{\large \@overtitle}}\par}
+          \vskip 1em\@plus1fill\relax
+          {\fontsize{30}{20}\selectfont\bfseries\@title\par}
+          \vskip 3em\relax
+          {\Large\textsi{\@subtitle}\par}
+          \vskip 5em\@plus1fill\relax
+          {\large
+            \if\@supervisor\@empty
               \shows{author}
-            }
-            \qquad
-            \parbox[t]{0.40\linewidth}{
-              \shows{supervisor}
-              \shows{cosupervisor}
-              \shows{tutor}
-            }
-          \fi
-        }
-        \par\vskip 1em\@plus1fill\relax
-        {\large\@date}\par
-      \end{center}
-    \end{minipage}
-  \end{titlepage}
+            \else
+              \parbox[t]{0.40\linewidth}{
+                \raggedright
+                \shows{author}
+              }
+              \qquad
+              \parbox[t]{0.40\linewidth}{
+                \raggedleft
+                \shows{supervisor}
+                \shows{cosupervisor}
+                \shows{tutor}
+              }
+            \fi
+          }
+          \par\vskip 1em\@plus1fill\relax
+          {\large\@date}\par
+        \end{center}
+      \end{minipage}
+    \end{titlepage}
+  \restoregeometry
   {
     \parindent\z@\relax
     \show{institutecontacts}
