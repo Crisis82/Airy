@@ -148,7 +148,7 @@
 %%%%%%%%%%% COLORS %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\definecolor{white}{HTML}{F5F5F5}
+%\definecolor{white}{HTML}{F5F5F5}
 \definecolor{black}{HTML}{1D1D1C}
 \definecolor{graydark}{HTML}{525252}
 
@@ -324,10 +324,11 @@
 \def\@banner{
   \ifx\academica@banner\@empty
     \textcolor{white}{\rule{\textwidth}{40pt}}
+    \vfill
   \else
     \@for\@ban:=\academica@banner\do{\includegraphics[width=\textwidth]{banners/\@ban.pdf}\\}
+    \vskip 5em\@plus1fill\relax
   \fi
-  \vfill
 }
 
 % Defines a new field 

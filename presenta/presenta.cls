@@ -120,7 +120,7 @@
 %%%%%%%%%%% COLORS %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\definecolor{white}{HTML}{F5F5F5}
+%\definecolor{white}{HTML}{F5F5F5}
 \definecolor{black}{HTML}{1D1D1C}
 \definecolor{graydark}{HTML}{525252}
 
