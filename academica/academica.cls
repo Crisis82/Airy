@@ -65,6 +65,7 @@
 \RequirePackage[figure,table]{totalcount} % get total occurences of figures and tables (used in TOC)
 
 \RequirePackage{tabularx}
+\RequirePackage{cancel}
 
 
 
@@ -252,8 +253,41 @@
   boxed title style={size=small,colframe=#3!160,arc=2mm}
 }
 
-\newenvironment{definition}[1][]{\begin{accentbox}[#1]{Definition}{lilla}}{\end{accentbox}}
-\newenvironment{note}[1][]{\begin{accentbox}[#1]{Note}{gray}}{\end{accentbox}}
+% definition of environment counters
+\newcounter{definition}
+\newcounter{theorem}
+\newcounter{lemma}
+\newcounter{proposition}
+\newcounter{corollary}
+\newcounter{proof}
+\newcounter{example}
+\newcounter{exercise}
+\newcounter{question}
+\newcounter{note}
+
+% definition of \autoref name
+\newcommand{\definitionautorefname}{Definition }
+\renewcommand{\theoremautorefname}{Theorem }
+\newcommand{\lemmaautorefname}{Lemma }
+\newcommand{\propositionautorefname}{Proposition }
+\newcommand{\corollaryautorefname}{Corollary }
+\newcommand{\proofautorefname}{Proof }
+\newcommand{\exampleautorefname}{Example }
+\newcommand{\exerciseautorefname}{Exercise }
+\newcommand{\questionautorefname}{Question }
+\newcommand{\noteautorefname}{Note }
+
+% creation of colored enviroments
+\newenvironment{definition}[1][]{\refstepcounter{definition}\begin{accentbox}[#1]{Definition}{lilla}}{\end{accentbox}}
+\newenvironment{theorem}[1][]{\refstepcounter{theorem}\begin{accentbox}[#1]{Theorem}{blue}}{\end{accentbox}}
+\newenvironment{lemma}[1][]{\refstepcounter{lemma}\begin{accentbox}[#1]{Lemma}{deepsea}}{\end{accentbox}}
+\newenvironment{proposition}[1][]{\refstepcounter{proposition}\begin{accentbox}[#1]{Proposition}{deepsea}}{\end{accentbox}}
+\newenvironment{corollary}[1][]{\refstepcounter{corollary}\begin{accentbox}[#1]{Corollary}{deepsea}}{\end{accentbox}}
+\newenvironment{proof}[1][]{\refstepcounter{proof}\begin{accentbox}[#1]{Proof}{pink}}{\end{accentbox}}
+\newenvironment{example}[1][]{\refstepcounter{example}\begin{accentbox}[#1]{Example}{orange}}{\end{accentbox}}
+\newenvironment{exercise}[1][]{\refstepcounter{exercise}\begin{accentbox}[#1]{Exercise}{orange}}{\end{accentbox}}
+\newenvironment{question}[1][]{\refstepcounter{question}\begin{accentbox}[#1]{Question}{green}}{\end{accentbox}}
+\newenvironment{note}{\refstepcounter{note}\begin{accentbox}[]{Note}{gray}}{\end{accentbox}}
 
 % custom title body:
 % chaptertitle <empty> bigchapternumber
@@ -589,10 +623,18 @@
 
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%   COMMON SHORTCUTS   %%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%   COMMON COMMANDS   %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\ie}{\textit{i.e.}, }
 \newcommand{\eg}{\textit{e.g.}, }
 \newcommand{\st}{\textit{s.t.} }
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%   MATH COMMANDS   %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\abs}[1]{\left\vert #1 \right\vert}
