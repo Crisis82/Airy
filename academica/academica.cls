@@ -91,17 +91,6 @@
 \else
   \RequirePackage{cmbright} % use computer modern bright for math
 
-  %\RequirePackage{mathspec}
-
-  %\setmathfont[
-  %    Path = fonts/,
-  %    UprightFont = regular,
-  %    ItalicFont = italic,
-  %    BoldFont = bold,
-  %    BoldItalicFont = bold-italic,
-  %    Extension = .ttf
-  %]{}
-
   \RequirePackage{fontspec} % allow to specify custom font
 
   \setmonofont[
@@ -232,6 +221,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%% ENVIRONMENT %%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\renewcommand{\labelitemii}{$\circ$}
 
 \def\acknowledgements{\chapter*{\textcolor{accentmedium}{Acknowledgements}}}
 \def\abstract{\chapter*{\textcolor{accentmedium}{Abstract}}\addcontentsline{toc}{chapter}{Abstract}}
@@ -557,7 +548,7 @@
 % edit appereance of `subsection` inside toc
 \titlecontents{subsection}[5pc]
 {\addvspace{2pt}}
-{\scriptsize$\bullet$\quad\small}
+{\scriptsize$\circ$\quad\small}
 {}
 {\hfill\small \thecontentspage}
 []
@@ -650,3 +641,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \newcommand{\abs}[1]{\left\vert #1 \right\vert}
+\newcommand{\vars}[3]{{#1}_{#2},\ldots,{#1}_{#3}}
+
+% Default math commands useful for spacing:
+% \; - a thick space
+% \: - a medium space
+% \, - a thin space
+% \! - a negative thin space
