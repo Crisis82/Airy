@@ -663,6 +663,7 @@
 \newcommand{\e}{\varepsilon}
 \renewcommand{\u}{\mu}
 \newcommand{\s}{\sigma}
+\renewcommand{\t}{\tau}
 \newcommand{\w}{\omega}
 \newcommand{\D}{\Delta}
 \renewcommand{\S}{\Sigma}
