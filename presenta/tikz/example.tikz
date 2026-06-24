@@ -1,0 +1,5 @@
+\begin{tikzpicture}
+
+  \draw[rounded corners,thick,accentmedium,fill=accentlight!40] (-2,0.4) rectangle (2,-0.4) node[midway,black] {A blocked text};
+
+\end{tikzpicture}
