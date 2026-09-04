@@ -8,13 +8,18 @@
 % Basic options without parameters
 \newif\ifacademica@pdfa
 \DeclareOption{pdfa}{\academica@pdfatrue}
-\DeclareOption{oneside}{\PassOptionsToClass{oneside}{book}}
-\newif\ifacademica@nolight
-\DeclareOption{nolight}{\academica@nolighttrue}
+\newif\ifacademica@oneside
+\DeclareOption{oneside}{\academica@onesidetrue\PassOptionsToClass{oneside}{book}}
+\newif\ifacademica@defaultfont
+\DeclareOption{defaultfont}{\academica@defaultfonttrue}
 \ProcessOptions\relax
 
 \LoadClass[a4paper,12pt]{book}
 %\LoadClass[a4paper,12pt,xcolor=table]{book}
+
+\ifacademica@oneside
+  \setlength{\parindent}{0pt}
+\fi
 
 
 
@@ -56,33 +61,35 @@
 \RequirePackage{tcolorbox} % creation of colored boxes
 
 \RequirePackage{mathtools,amssymb} % math environments (equation, ..) and math symbols
+% \RequirePackage{stmaryrd} % for llbracket, ie, [[, ]]
 
 \RequirePackage{tikz} % creation of tikz pictures
 \usetikzlibrary{shadows} % adds shadow option into tikz pictures
 \usetikzlibrary{decorations.pathmorphing} % adds line path modification (for wavy lines)
+\usetikzlibrary{positioning} % improved node positioning
+% \usetikzlibrary{arrows}
+% \usetikzlibrary{angles}
+% \usetikzlibrary{calc} % allows calculations to change node positioning
+% \usetikzlibrary{trees,patterns} % trees
+% \usetikzlibrary{automata} % automata
+% \usetikzlibrary{quantikz2} % quantum library
 
 \RequirePackage{pgfplots} % extend tikz by adding plots
 \pgfplotsset{compat=1.18} % sets pgfplots compat version
 \RequirePackage{siunitx} % units of measure (seconds, ...)
 
+\RequirePackage{booktabs, multirow} % improved tables (multicolumn, multiurow)
+\RequirePackage{tabularx} % improved tabular
+% \RequirePackage{array} % other tabular improvements like custom widths
+
 \RequirePackage[figure,table]{totalcount} % get total occurences of figures and tables (used in TOC)
 
-\RequirePackage{tabularx} % powerful tabular extension
 \RequirePackage{cancel} % for cancelling our math
 \RequirePackage{listings} % for block of codes
-
+\RequirePackage{adjustbox} % automatically adjust width of figure/tikz
 \RequirePackage{xspace} % for space only if no punctuation follows
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%% BASIC CLASS OPTIONS %%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Basic options without parameters
-\newif\ifacademica@pdfa
-\DeclareOption{pdfa}{\academica@pdfatrue} % class option pdfa
-\newif\ifacademica@light
-\DeclareOption{light}{\academica@lighttrue} % class option light
-\ProcessOptions\relax
+% \RequirePackage{enumitem} % improved control over lists
+% \RequirePackage{xurl} % url hyphenation
 
 
 
@@ -90,84 +97,65 @@
 %%%%%%%  FONTS  %%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%
 
-% By default sets text to a light font.
-\ifacademica@nolight
-  \RequirePackage{cmbright} % use computer modern bright for math
+% By default academica changes font to a custom light font.
+\ifacademica@defaultfont
 \else
-  \RequirePackage{cmbright} % use computer modern bright for math
-  %\RequirePackage{unicode-math}
+  % we first load light version of computer modern bright st
+  % everything it's light, then we manyally override with 
+  % fontspec the fonts, thus, only math or missing characters
+  % are taken from cmbright
+  \RequirePackage{cmbright}
   \RequirePackage{fontspec} % allow to specify custom font
 
+  %------------------------------------------
+  %--------------- Monospaced ---------------
+  %------------------------------------------
+
   \setmonofont{MonofurNerdFontMono-}[
-      %Path = fonts/,
+      % Path = fonts/,
       UprightFont = *Regular,
       ItalicFont = *Italic,
       BoldFont = *Bold,
       Extension = .ttf
   ]
 
-  %--------------------
-  % Inter
-  %--------------------
-
-  %\setmainfont{Inter_18pt-}[
-  %    %Path = fonts/,
-  %    UprightFont = *ExtraLight,
-  %    ItalicFont = *ExtraLightItalic,
-  %    BoldFont = *Medium,
-  %    BoldItalicFont = *MediumItalic,
-  %    Extension = .ttf
-  %]
-
-  %\setsansfont{Inter_18pt-}[
-  %    %Path = fonts/,
-  %    UprightFont = *ExtraLight,
-  %    ItalicFont = *ExtraLightItalic,
-  %    BoldFont = *Medium,
-  %    BoldItalicFont = *MediumItalic,
-  %    Extension = .ttf
-  %]
-  %
-  %\newfontface\semibold{Inter_18pt-}[
-  %    %Path = fonts/,
-  %    UprightFont = *Light,
-  %    ItalicFont = *LightItalic,
-  %    Extension = .ttf
-  %]
-
-  %--------------------
-  % Outfit
-  %--------------------
+  %----------------------------------------
+  %--------------- Main font --------------
+  %----------------------------------------
 
   \setmainfont{Outfit-}[
-      %Path = fonts/,
       UprightFont = *ExtraLight,
-      ItalicFont = *ExtraLight,
-      ItalicFeatures = {FakeSlant = 0.3},
+      ItalicFont = *ExtraLightItalic,
       BoldFont = *Medium,
-      BoldItalicFont = *Medium,
-      BoldItalicFeatures = {FakeSlant = 0.3},
-      Extension = .ttf
+      BoldItalicFont = *MediumItalic,
+      Extension = .otf
   ]
 
   \setsansfont{Outfit-}[
-      %Path = fonts/,
       UprightFont = *ExtraLight,
-      ItalicFont = *ExtraLight,
-      ItalicFeatures = {FakeSlant = 0.3},
+      ItalicFont = *ExtraLightItalic,
       BoldFont = *Medium,
-      BoldItalicFont = *Medium,
-      BoldItalicFeatures = {FakeSlant = 0.3},
-      Extension = .ttf
+      BoldItalicFont = *MediumItalic,
+      Extension = .otf
   ]
   
   \newfontface\semibold{Outfit-}[
-      %Path = fonts/,
       UprightFont = *Light,
-      ItalicFont = *Light,
-      ItalicFeatures = {FakeSlant = 0.3},
-      Extension = .ttf
+      ItalicFont = *LightItalic,
+      Extension = .otf
   ]
+
+  %------------------------------------
+  %--------------- Math ---------------
+  %------------------------------------
+
+  %\RequirePackage{unicode-math}
+
+  %\setmathfont{OutfitMath}[
+  %  Path = fonts/,
+  %  Extension = {.otf}
+  %]
+
 \fi
 
 \newcommand{\quoted}[1]{``{#1}''}
@@ -180,9 +168,8 @@
 %%%%%%%%%%% COLORS %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\definecolor{white}{HTML}{F5F5F5}
-\definecolor{black}{HTML}{1D1D1C}
 \colorlet{graylight}{gray!50}
+\colorlet{graymid}{gray!75}
 \definecolor{graydark}{HTML}{525252}
 
 \definecolor{lilla}{HTML}{B4B5EE}
@@ -190,6 +177,7 @@
 \definecolor{deepsea}{HTML}{123499}
 \definecolor{pink}{HTML}{F7ABDC}
 \definecolor{red}{HTML}{E95678}
+\colorlet{redlight}{red!60}
 \definecolor{green}{HTML}{3FDAA4}
 \definecolor{orange}{HTML}{F09483}
 \definecolor{yellow}{HTML}{FAE3B0}
@@ -200,14 +188,13 @@
 \colorlet{accentdark}{lilla!320}
 
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%% PAGING %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \geometry{
     hcentering,
-    bindingoffset=.05\paperwidth,
+    bindingoffset=.025\paperwidth,
     outer=.075\paperwidth,
     nofoot,nomarginpar,
     vdivide={.08\paperheight,*,.06\paperheight}
@@ -331,8 +318,8 @@
 
 % definition of environment counters
 \newcounter{definition}
-\newcounter{postulate}
 \newcounter{theorem}
+\newcounter{postulate}
 \newcounter{lemma}
 \newcounter{proposition}
 \newcounter{corollary}
@@ -340,12 +327,11 @@
 \newcounter{example}
 \newcounter{exercise}
 \newcounter{question}
-\newcounter{note}
 
 % definition of \autoref name
 \newcommand{\definitionautorefname}{Definition}
-\newcommand{\postulateautorefname}{Postulate}
 \renewcommand{\theoremautorefname}{Theorem}
+\newcommand{\postulateautorefname}{Postulate}
 \newcommand{\lemmaautorefname}{Lemma}
 \newcommand{\propositionautorefname}{Proposition}
 \newcommand{\corollaryautorefname}{Corollary}
@@ -353,37 +339,44 @@
 \newcommand{\exampleautorefname}{Example}
 \newcommand{\exerciseautorefname}{Exercise}
 \newcommand{\questionautorefname}{Question}
-\newcommand{\noteautorefname}{Note}
 
 
 % creation of colored enviroments
 \newenvironment{definition}[1][]{\refstepcounter{definition}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Definition}{\thedefinition}{lilla}}{\end{accentbox}}
-\newenvironment{postulate}[1][]{\refstepcounter{postulate}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Postulate}{\thepostulate}{blue}}{\end{accentbox}}
 \newenvironment{theorem}[1][]{\refstepcounter{theorem}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Theorem}{\thetheorem}{blue}}{\end{accentbox}}
+\newenvironment{postulate}[1][]{\refstepcounter{postulate}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Postulate}{\thepostulate}{blue}}{\end{accentbox}}
 \newenvironment{lemma}[1][]{\refstepcounter{lemma}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Lemma}{\thelemma}{deepsea}}{\end{accentbox}}
 \newenvironment{proposition}[1][]{\refstepcounter{proposition}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Proposition}{\theproposition}{deepsea}}{\end{accentbox}}
 \newenvironment{corollary}[1][]{\refstepcounter{corollary}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Corollary}{\thecorollary}{deepsea}}{\end{accentbox}}
 \newenvironment{proof}[1][]{\refstepcounter{proof}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Proof}{\theproof}{pink}}{\end{accentbox}}
-\newenvironment{example}[1][]{\refstepcounter{example}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Example}{\theexample}{orange}}{\end{accentbox}}
-\newenvironment{exercise}[1][]{\refstepcounter{exercise}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Exercise}{\theexercise}{orange}}{\end{accentbox}}
-\newenvironment{question}[1][]{\refstepcounter{question}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Question}{\theexercise}{green}}{\end{accentbox}}
+\newenvironment{example}[1][]{\refstepcounter{example}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Example}{\theexample}{graylight}}{\end{accentbox}}
+\newenvironment{exercise}[1][]{\refstepcounter{exercise}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Exercise}{\theexercise}{graylight}}{\end{accentbox}}
+\newenvironment{question}[1][]{\refstepcounter{question}\def\@currentlabelname{#1}\begin{accentbox}[#1]{Question}{\theexercise}{graylight}}{\end{accentbox}}
 
 \newenvironment{definition*}[1][]{\begin{accentbox*}[#1]{Definition}{lilla}}{\end{accentbox*}}
-\newenvironment{postulate*}[1][]{\begin{accentbox*}[#1]{Postulate}{blue}}{\end{accentbox*}}
 \newenvironment{theorem*}[1][]{\begin{accentbox*}[#1]{Theorem}{blue}}{\end{accentbox*}}
+\newenvironment{postulate*}[1][]{\begin{accentbox*}[#1]{Postulate}{blue}}{\end{accentbox*}}
 \newenvironment{lemma*}[1][]{\begin{accentbox*}[#1]{Lemma}{deepsea}}{\end{accentbox*}}
 \newenvironment{proposition*}[1][]{\begin{accentbox*}[#1]{Proposition}{deepsea}}{\end{accentbox*}}
 \newenvironment{corollary*}[1][]{\begin{accentbox*}[#1]{Corollary}{deepsea}}{\end{accentbox*}}
 \newenvironment{proof*}[1][]{\begin{accentbox*}[#1]{Proof}{pink}}{\end{accentbox*}}
-\newenvironment{example*}[1][]{\begin{accentbox*}[#1]{Example}{orange}}{\end{accentbox*}}
-\newenvironment{exercise*}[1][]{\begin{accentbox*}[#1]{Exercise}{orange}}{\end{accentbox*}}
-\newenvironment{question*}[1][]{\begin{accentbox*}[#1]{Question}{green}}{\end{accentbox*}}
-\newenvironment{note}[1][]{\begin{accentbox*}[#1]{Note}{gray}}{\end{accentbox*}}
+\newenvironment{example*}[1][]{\begin{accentbox*}[#1]{Example}{graylight}}{\end{accentbox*}}
+\newenvironment{exercise*}[1][]{\begin{accentbox*}[#1]{Exercise}{graylight}}{\end{accentbox*}}
+\newenvironment{question*}[1][]{\begin{accentbox*}[#1]{Question}{graylight}}{\end{accentbox*}}
+\newenvironment{remark}[1][]{\begin{accentbox*}[#1]{Remark}{redlight}}{\end{accentbox*}}
+\newenvironment{note}[1][]{\begin{accentbox*}[#1]{Note}{redlight}}{\end{accentbox*}}
 
 \newenvironment{displaybox}{\par\bigskip}{\par\bigskip}
 
+% custom boxed part title
+\titleformat{\part}[display]
+  {\centering\Huge}
+  {\bfseries\scshape\color{blue!160} Part \ \ \thepart}
+  {2em}
+  {\semibold\itshape}
+
 % custom title body:
-% chaptertitle <empty> bigchapternumber
+%     chaptertitle <empty> bigchapternumber
 \newcommand{\chaptertitlemain}[1]{
   #1
   \hfill
@@ -450,6 +443,9 @@
   showstringspaces=false,
   mathescape=true
 }
+
+% gray math in listing comments
+\newcommand{\gm}[1]{{\color{gray!75}{#1}}}
 
 
 
@@ -614,43 +610,164 @@
 
 \contentsmargin{0cm}
 
-% edit appereance of `part` inside toc
+% Compute fixed chapter box width once (measure widest case: "Chapter 20")
+% Store in \acadChapBoxWd for reuse
+\newlength{\acadChapBoxWd}
+\newlength{\acadChapBoxInnWd}
+\AtBeginDocument{%
+  \sbox0{\Large\scshape\bfseries Chapter\ 20}%
+  \setlength{\acadChapBoxInnWd}{\wd0}%
+  % total box width = inner text + 2×horizontal padding (0.20cm each side)
+  \setlength{\acadChapBoxWd}{\acadChapBoxInnWd}%
+  \addtolength{\acadChapBoxWd}{0.40cm} % 2 × 0.20cm padding
+}
+\newlength{\tocChapRightEdge}
+\setlength{\tocChapRightEdge}{-0.20cm}
+
+% edit appearance of `part` inside toc
 \titlecontents{part}[-1pc]
 {
   \addvspace{50pt}
-	\begin{tikzpicture}[overlay]
-		\draw[fill=accent,draw=accent,rounded corners] (-4.5,-0.2) rectangle (-0.2,0.55);
-    \pgftext[left,x=-1.6cm,y=0.15cm]{\textcolor{white}{\Large\sc\bfseries Part}}
-	\end{tikzpicture}\large\sc\bfseries
+  \begin{tikzpicture}[overlay]
+    \draw[fill=blue,draw=blue,rounded corners] (-4.5,-0.2) rectangle (0.45,0.58);
+    \pgftext[left,x=-1.6cm,y=0.2cm]{\Large\scshape\bfseries Part}
+  \end{tikzpicture}\large\scshape\bfseries
 }
 {}
 {}
 {}
 
-% edit appereance of `chapter` inside toc
+% edit appearance of `chapter` inside toc
 \titlecontents{chapter}[5pc]
 {
   \addvspace{30pt}
-  \ifx\thecontentslabel\@empty
-    \begin{tikzpicture}[overlay]
-	  	\draw[fill=accent,draw=accent,rounded corners] (-3.5,-0.2) rectangle (-0.7,0.55);
-      \pgftext[left,x=-3.38cm,y=0.18cm]{\textcolor{white}{\Large\sc\bfseries Chapter}}
-    \end{tikzpicture}\large\sc\bfseries
-  \else
-	  \begin{tikzpicture}[overlay]
-	  	\draw[fill=accent,draw=accent,rounded corners] (-3.5,-0.2) rectangle (-0.1,0.55);
-      \pgftext[left,x=-3.38cm,y=0.18cm]{\textcolor{white}{\Large\sc\bfseries Chapter\ \thecontentslabel}}
-    \end{tikzpicture}\large\sc\bfseries
-  \fi
+  \begin{tikzpicture}[overlay]
+    \pgfmathsetmacro{\tocBoxW}{\the\acadChapBoxWd/28.3465}%
+    \pgfmathsetmacro{\tocRcm}{\the\tocChapRightEdge/28.3465}%
+    \draw[fill=accent,draw=accent,rounded corners]
+      (\tocRcm cm - \tocBoxW cm, -0.2) rectangle (\tocRcm cm, 0.58);
+    \pgftext[left, x=\tocRcm cm - \tocBoxW cm + 0.20cm, y=0.2cm]{%
+      \textcolor{white}{%
+        \makebox[\acadChapBoxInnWd][l]{%
+          \Large\scshape\bfseries Chapter%
+          \ifx\thecontentslabel\@empty
+            \hfill
+          \else
+            \hfill\thecontentslabel
+          \fi
+        }%
+      }%
+    }
+  \end{tikzpicture}\large\scshape\bfseries
 }
 {}
 {}
 {
-  \;\titlerule\;\large\sc\bfseries Page \thecontentspage
-	\begin{tikzpicture}[overlay]
-		\draw[fill=black,draw=black] (4pt,0.2pt) rectangle (4cm,0.2pt);
-	\end{tikzpicture}
+  \;\titlerule\;\large\scshape\bfseries Page \thecontentspage
+  \begin{tikzpicture}[overlay]
+    \draw[fill=black,draw=black] (4pt,0.2pt) rectangle (4cm,0.2pt);
+  \end{tikzpicture}
 }
+
+%-----------------------------------------------------------------
+%-----------------------------------------------------------------
+
+%% pt→cm conversion: 1cm = 28.3465pt
+%\newlength{\acadtocwd}
+%
+%% edit appearance of `part` inside toc
+%\titlecontents{part}[-1pc]
+%{
+%  \addvspace{50pt}
+%  \sbox0{\Large\scshape\bfseries Part}%
+%  \setlength{\acadtocwd}{\wd0}%
+%  \pgfmathsetmacro{\tocboxR}{-0.3}%            % fixed right edge (cm)
+%  \pgfmathsetmacro{\tocboxPad}{0.14}%           % horizontal padding (cm)
+%  \pgfmathsetmacro{\tocboxTW}{\the\acadtocwd/28.3465}%
+%  \pgfmathsetmacro{\tocboxL}{\tocboxR - \tocboxTW - 2*\tocboxPad}%
+%  \begin{tikzpicture}[overlay]
+%    \draw[fill=accent,draw=accent,rounded corners]
+%      (\tocboxL cm,-0.2) rectangle (\tocboxR cm,0.55);
+%    \pgftext[right,x=\tocboxR cm - \tocboxPad cm,y=0.18cm]{%
+%      \textcolor{white}{\Large\scshape\bfseries Part}}
+%  \end{tikzpicture}\large\scshape\bfseries
+%}
+%{}
+%{}
+%{}
+%
+%% edit appearance of `chapter` inside toc
+%\titlecontents{chapter}[5pc]
+%{
+%  \addvspace{30pt}
+%  % measure whatever goes in the box — handles "", "1", "12" uniformly
+%  \ifx\thecontentslabel\@empty
+%    \sbox0{\Large\scshape\bfseries Chapter}%
+%  \else
+%    \sbox0{\Large\scshape\bfseries Chapter\ \thecontentslabel}%
+%  \fi
+%  \setlength{\acadtocwd}{\wd0}%
+%  \pgfmathsetmacro{\tocboxR}{-0.3}%            % right edge: fixed, digits land here
+%  \pgfmathsetmacro{\tocboxPad}{0.14}%           % padding left+right of text
+%  \pgfmathsetmacro{\tocboxTW}{\the\acadtocwd/28.3465}%
+%  \pgfmathsetmacro{\tocboxL}{\tocboxR - \tocboxTW - 2*\tocboxPad}%
+%  \begin{tikzpicture}[overlay]
+%    \draw[fill=accent,draw=accent,rounded corners]
+%      (\tocboxL cm,-0.2) rectangle (\tocboxR cm,0.55);
+%    \pgftext[right,x=\tocboxR cm - \tocboxPad cm,y=0.18cm]{%
+%      \textcolor{white}{\Large\scshape\bfseries
+%        \ifx\thecontentslabel\@empty Chapter\else Chapter\ \thecontentslabel\fi}}
+%  \end{tikzpicture}\large\scshape\bfseries
+%}
+%{}
+%{}
+%{
+%  \;\titlerule\;\large\scshape\bfseries Page \thecontentspage
+%  \begin{tikzpicture}[overlay]
+%    \draw[fill=black,draw=black] (4pt,0.2pt) rectangle (4cm,0.2pt);
+%  \end{tikzpicture}
+%}
+
+%-----------------------------------------------------------------
+%-----------------------------------------------------------------
+
+%% edit appereance of `part` inside toc
+%\titlecontents{part}[-1pc]
+%{
+%  \addvspace{50pt}
+%	\begin{tikzpicture}[overlay]
+%		\draw[fill=accent,draw=accent,rounded corners] (-4.5,-0.2) rectangle (-0.2,0.55);
+%    \pgftext[left,x=-1.6cm,y=0.15cm]{\textcolor{white}{\Large\scshape\bfseries Part}}
+%	\end{tikzpicture}\large\scshape\bfseries
+%}
+%{}
+%{}
+%{}
+%
+%% edit appereance of `chapter` inside toc
+%\titlecontents{chapter}[5pc]
+%{
+%  \addvspace{30pt}
+%  \ifx\thecontentslabel\@empty
+%    \begin{tikzpicture}[overlay]
+%	  	\draw[fill=accent,draw=accent,rounded corners] (-3.5,-0.2) rectangle (-0.7,0.55);
+%      \pgftext[left,x=-3.38cm,y=0.18cm]{\textcolor{white}{\Large\scshape\bfseries Chapter}}
+%    \end{tikzpicture}\large\scshape\bfseries
+%  \else
+%	  \begin{tikzpicture}[overlay]
+%	  	\draw[fill=accent,draw=accent,rounded corners] (-3.5,-0.2) rectangle (-0.3,0.55);
+%      \pgftext[left,x=-3.42cm,y=0.18cm]{\textcolor{white}{\Large\scshape\bfseries Chapter\ \thecontentslabel}}
+%    \end{tikzpicture}\large\scshape\bfseries
+%  \fi
+%}
+%{}
+%{}
+%{
+%  \;\titlerule\;\large\scshape\bfseries Page \thecontentspage
+%	\begin{tikzpicture}[overlay]
+%		\draw[fill=black,draw=black] (4pt,0.2pt) rectangle (4cm,0.2pt);
+%	\end{tikzpicture}
+%}
 
 % edit appereance of `section` inside toc
 \titlecontents{section}[5pc]
@@ -689,7 +806,7 @@
 	  \vspace*{-20\p@}
 	  \begin{tikzpicture}[overlay]
 		  \draw[fill=accent,draw=accent,rounded corners] (10,-0.65) rectangle (20,1);
-      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\sc\bfseries\textcolor{white}{List of Figures}}
+      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\scshape\bfseries\textcolor{white}{List of Figures}}
 	  \end{tikzpicture}
   }
   \@starttoc{lof}
@@ -700,7 +817,7 @@
 	  \vspace*{-20\p@}
 	  \begin{tikzpicture}[overlay]
 		  \draw[fill=accent,draw=accent,rounded corners] (10.5,-0.65) rectangle (20,1);
-      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\sc\bfseries\textcolor{white}{List of Tables}}
+      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\scshape\bfseries\textcolor{white}{List of Tables}}
 	  \end{tikzpicture}
   }
   \@starttoc{lot}
@@ -712,7 +829,7 @@
 	  \vspace*{-20\p@}
 	  \begin{tikzpicture}[overlay]
 		  \draw[fill=accent,draw=accent,rounded corners] (12.2,-0.65) rectangle (20,1);
-      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\sc\bfseries\textcolor{white}{\contentsname}}
+      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\scshape\bfseries\textcolor{white}{\contentsname}}
 	  \end{tikzpicture}
   }
 	\@starttoc{toc}
@@ -727,7 +844,7 @@
 %%%%%%%   REFERENCES   %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% \addbibresource{bib/abbrev0.bib}
+% set bib resource in preamble.tex with
 % \addbibresource{bib/main.bib}
 
 \DeclareFieldFormat{title}{\mkbibquote{#1}} % applies quotes to title in all entry types (@Misc, was missing them)
@@ -737,7 +854,16 @@
   % \nocite{*} % adds all bibliography entries, even not cited
   \printbibliography[heading=none]
 }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%   HYPHENATION   %%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\hyphenation{
+  sto-res
+  sha-red
+  ta-bleau
+  ta-bleaux
+}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -748,6 +874,8 @@
 \newcommand{\eg}{\textit{e.g.}}
 \newcommand{\st}{\textit{s.t.} }
 
+\newcommand{\wlogt}{w.l.o.g.\xspace}
+\newcommand{\Wlogt}{W.l.o.g.\xspace}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -759,12 +887,10 @@
 \newcommand{\vars}[3]{{#1}_{#2},\ldots,{#1}_{#3}}
 
 \newcommand{\ifft}{\text{ iff }}
+\newcommand{\ift}{\text{if }}
 \newcommand{\andt}{\text{ and }}
 \newcommand{\ort}{\text{ or }}
 \newcommand{\fort}{\text{ for }}
-
-\renewcommand{\mod}{\text{ mod }}
-\DeclareMathOperator{\xor}{\oplus}
 
 \newcommand{\tuple}[1]{(\,#1\,)}
 \newcommand{\tuplev}[1]{\langle\,#1\,\rangle}
@@ -794,7 +920,6 @@
 \newcommand{\C}{\mathcal{C}}
 \newcommand{\F}{\mathcal{F}}
 \newcommand{\G}{\mathcal{G}}
-% \newcommand{\H}{\mathcal{H}}
 \newcommand{\J}{\mathcal{J}}
 \renewcommand{\L}{\mathcal{L}}
 \renewcommand{\P}{\mathcal{P}}
@@ -809,8 +934,11 @@
 \newcommand{\true}{\textsc{true}\xspace}
 \newcommand{\false}{\textsc{false}\xspace}
 
-
-\newcommand{\gm}[1]{{\color{gray!75}{#1}}}
+\DeclareMathOperator{\xor}{\oplus}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\min}{\text{min}}
+\renewcommand{\max}{\text{max}}
+% \renewcommand{\mod}{\text{ mod }}
 
 % Default math commands useful for spacing:
 % \; - a thick space
