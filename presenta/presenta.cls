@@ -9,9 +9,10 @@
 \newif\ifpresenta@pdfa
 \DeclareOption{pdfa}{\presenta@pdfatrue}
 \DeclareOption{handout}{\PassOptionsToClass{handout}{beamer}}
-\newif\ifpresenta@nolight
-\DeclareOption{nolight}{\presenta@nolighttrue}
+\newif\ifpresenta@defaultfont
+\DeclareOption{defaultfont}{\presenta@defaultfonttrue}
 \ProcessOptions\relax
+
 
 \LoadClass[aspectratio=169,xcolor=table]{beamer}
 
@@ -40,25 +41,52 @@
   \RequirePackage{hyperref} % management of hyperlinks, plus autogeneration of bookmarks
 \fi
 
+%\RequirePackage{geometry} % sets page geometry style
+%\RequirePackage{titlesec} % easily modify appereance of chapters and sections
+%\RequirePackage{titletoc} % easily modify appereance of tableofcontents
+
 \RequirePackage{graphicx} % allow use of \includegraphics
 \RequirePackage{float} % floating positioning for images, ..
 \RequirePackage{caption} % provide captions (images, tables, ..)
-\RequirePackage{subcaption} % provides subfigures and subcaptions
+\RequirePackage{subcaption} % provides multiple captions
 
 \RequirePackage[backend=biber,style=numeric,maxbibnames=99,doi=true,eprint=true,sorting=none]{biblatex} % bibliography management
 
+\RequirePackage[table]{xcolor} % provides common colornames, plus allows definition of custom colors
 \RequirePackage{tcolorbox} % creation of colored boxes
 
 \RequirePackage{mathtools,amssymb} % math environments (equation, ..) and math symbols
+% \RequirePackage{stmaryrd} % for llbracket, ie, [[, ]]
+
 \RequirePackage{tikz} % creation of tikz pictures
-\usetikzlibrary{shadows,overlay-beamer-styles} % adds shadow and beamer options into tikz pictures
+\usetikzlibrary{overlay-beamer-styles} % adds beamer options
+\usetikzlibrary{shadows} % adds shadow option into tikz pictures
+\usetikzlibrary{decorations.pathmorphing} % adds line path modification (for wavy lines)
+\usetikzlibrary{positioning} % improved node positioning
+% \usetikzlibrary{arrows}
+% \usetikzlibrary{angles}
+% \usetikzlibrary{calc} % allows calculations to change node positioning
+% \usetikzlibrary{trees,patterns} % trees
+% \usetikzlibrary{automata} % automata
+% \usetikzlibrary{quantikz2} % quantum library
+
 \RequirePackage{pgfplots} % extend tikz by adding plots
 \pgfplotsset{compat=1.18} % sets pgfplots compat version
+\RequirePackage{siunitx} % units of measure (seconds, ...)
 
-\RequirePackage{tabularx} % powerful tabular
+\RequirePackage{booktabs, multirow} % improved tables (multicolumn, multiurow)
+\RequirePackage{tabularx} % improved tabular
 \RequirePackage{ragged2e} % provides justification inside columns
-\RequirePackage{enumitem} % itemize customization
+% \RequirePackage{array} % other tabular improvements like custom widths
 
+\RequirePackage[figure,table]{totalcount} % get total occurences of figures and tables (used in TOC)
+
+\RequirePackage{cancel} % for cancelling our math
+\RequirePackage{listings} % for block of codes
+\RequirePackage{adjustbox} % automatically adjust width of figure/tikz
+\RequirePackage{xspace} % for space only if no punctuation follows
+\RequirePackage{enumitem} % improved control over lists
+% \RequirePackage{xurl} % url hyphenation
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -66,92 +94,59 @@
 %%%%%%%%%%%%%%%%%%%%%%%
 
 % By default sets text to a light font.
-\ifpresenta@nolight
+\ifpresenta@defaultfont
 \else
   %\RequirePackage{unicode-math}
   \RequirePackage{fontspec} % allow to specify custom font
 
+  %------------------------------------------
+  %--------------- Monospaced ---------------
+  %------------------------------------------
+
   \setmonofont{MonofurNerdFontMono-}[
-      %Path = fonts/,
+      % Path = fonts/,
       UprightFont = *Regular,
       ItalicFont = *Italic,
       BoldFont = *Bold,
       Extension = .ttf
   ]
 
-  %--------------------
-  % Inter
-  %--------------------
-
-  %\setmainfont{Inter_18pt-}[
-  %    %Path = fonts/,
-  %    UprightFont = *ExtraLight,
-  %    ItalicFont = *ExtraLightItalic,
-  %    BoldFont = *Medium,
-  %    BoldItalicFont = *MediumItalic,
-  %    Extension = .ttf
-  %]
-
-  %\setsansfont{Inter_18pt-}[
-  %    %Path = fonts/,
-  %    UprightFont = *ExtraLight,
-  %    ItalicFont = *ExtraLightItalic,
-  %    BoldFont = *Medium,
-  %    BoldItalicFont = *MediumItalic,
-  %    Extension = .ttf
-  %]
-  %
-  %\newfontface\semibold{Inter_18pt-}[
-  %    %Path = fonts/,
-  %    UprightFont = *Light,
-  %    ItalicFont = *LightItalic,
-  %    Extension = .ttf
-  %]
-
-  %--------------------
-  % Outfit
-  %--------------------
+  %----------------------------------------
+  %--------------- Main font --------------
+  %----------------------------------------
 
   \setmainfont{Outfit-}[
-      %Path = fonts/,
       UprightFont = *ExtraLight,
-      ItalicFont = *ExtraLight,
-      ItalicFeatures = {FakeSlant = 0.3},
+      ItalicFont = *ExtraLightItalic,
       BoldFont = *Medium,
-      BoldItalicFont = *Medium,
-      BoldItalicFeatures = {FakeSlant = 0.3},
-      Extension = .ttf
+      BoldItalicFont = *MediumItalic,
+      Extension = .otf
   ]
 
   \setsansfont{Outfit-}[
-      %Path = fonts/,
       UprightFont = *ExtraLight,
-      ItalicFont = *ExtraLight,
-      ItalicFeatures = {FakeSlant = 0.3},
+      ItalicFont = *ExtraLightItalic,
       BoldFont = *Medium,
-      BoldItalicFont = *Medium,
-      BoldItalicFeatures = {FakeSlant = 0.3},
-      Extension = .ttf
-  ]
-
-  \setsansfont{Outfit-}[
-      %Path = fonts/,
-      UprightFont = *ExtraLight,
-      ItalicFont = *ExtraLight,
-      ItalicFeatures = {FakeSlant = 0.3},
-      BoldFont = *Medium,
-      BoldItalicFont = *Medium,
-      BoldItalicFeatures = {FakeSlant = 0.3},
-      Extension = .ttf
+      BoldItalicFont = *MediumItalic,
+      Extension = .otf
   ]
   
   \newfontface\semibold{Outfit-}[
-      %Path = fonts/,
       UprightFont = *Light,
-      ItalicFont = *Light,
-      ItalicFeatures = {FakeSlant = 0.3},
-      Extension = .ttf
+      ItalicFont = *LightItalic,
+      Extension = .otf
   ]
+
+  %------------------------------------
+  %--------------- Math ---------------
+  %------------------------------------
+
+  %\RequirePackage{unicode-math}
+
+  %\setmathfont{OutfitMath}[
+  %  Path = fonts/,
+  %  Extension = {.otf}
+  %]
 
 \fi
 
@@ -168,8 +163,8 @@
 %%%%%%%%%%% COLORS %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%\definecolor{white}{HTML}{F5F5F5}
-\definecolor{black}{HTML}{1D1D1C}
+\colorlet{graylight}{gray!50}
+\colorlet{graymid}{gray!75}
 \definecolor{graydark}{HTML}{525252}
 
 \definecolor{lilla}{HTML}{B4B5EE}
@@ -177,8 +172,10 @@
 \definecolor{deepsea}{HTML}{123499}
 \definecolor{pink}{HTML}{F7ABDC}
 \definecolor{red}{HTML}{E95678}
+\colorlet{redlight}{red!60}
 \definecolor{green}{HTML}{3FDAA4}
 \definecolor{orange}{HTML}{F09483}
+\definecolor{yellow}{HTML}{FAE3B0}
 
 \colorlet{accent}{lilla!160}
 \colorlet{accentlight}{lilla}
@@ -462,14 +459,47 @@
   colbacktitle=white,
   coltitle=#3!240,
   coltext=black,
-  arc=4mm,boxrule=1.5pt,
-  title=\textbf{#2}\ifx#1\@empty \else : \textit{#1}\fi,
-  halign=flush left,
+  arc=4mm,boxrule=2pt,
+  title={\textbf{#2}\ifx#1\@empty\else : \emph{#1}\fi},
+  boxed title style={size=small,colframe=#3!160,arc=2mm}
+}
+\newtcolorbox{accentbox*}[3][]{
+  enhanced,
+  attach boxed title to top left={xshift=3mm,yshift=-3mm,yshifttext=-1mm},
+  colback=#3!30,
+  colframe=#3!160,
+  colbacktitle=white,
+  coltitle=#3!240,
+  coltext=black,
+  arc=4mm,boxrule=2pt,
+  title={\textbf{#2}\ifx#1\@empty\else : \emph{#1}\fi},
   boxed title style={size=small,colframe=#3!160,arc=2mm}
 }
 
 \renewenvironment{definition}[1][]{\begin{accentbox}[#1]{Definition}{lilla}}{\end{accentbox}}
-\renewenvironment{note}[1][]{\begin{accentbox}[#1]{Note}{gray}}{\end{accentbox}}
+\renewenvironment{theorem}[1][]{\begin{accentbox}[#1]{Theorem}{blue}}{\end{accentbox}}
+\newenvironment{postulate}[1][]{\begin{accentbox}[#1]{Postulate}{blue}}{\end{accentbox}}
+\renewenvironment{lemma}[1][]{\begin{accentbox}[#1]{Lemma}{deepsea}}{\end{accentbox}}
+\newenvironment{proposition}[1][]{\begin{accentbox}[#1]{Proposition}{deepsea}}{\end{accentbox}}
+\renewenvironment{corollary}[1][]{\begin{accentbox}[#1]{Corollary}{deepsea}}{\end{accentbox}}
+\renewenvironment{proof}[1][]{\begin{accentbox}[#1]{Proof}{pink}}{\end{accentbox}}
+\renewenvironment{example}[1][]{\begin{accentbox}[#1]{Example}{graylight}}{\end{accentbox}}
+\newenvironment{exercise}[1][]{\begin{accentbox}[#1]{Exercise}{graylight}}{\end{accentbox}}
+\newenvironment{question}[1][]{\begin{accentbox}[#1]{Question}{graylight}}{\end{accentbox}}
+
+\newenvironment{definition*}[1][]{\begin{accentbox*}[#1]{Definition}{lilla}}{\end{accentbox*}}
+\newenvironment{theorem*}[1][]{\begin{accentbox*}[#1]{Theorem}{blue}}{\end{accentbox*}}
+\newenvironment{postulate*}[1][]{\begin{accentbox*}[#1]{Postulate}{blue}}{\end{accentbox*}}
+\newenvironment{lemma*}[1][]{\begin{accentbox*}[#1]{Lemma}{deepsea}}{\end{accentbox*}}
+\newenvironment{proposition*}[1][]{\begin{accentbox*}[#1]{Proposition}{deepsea}}{\end{accentbox*}}
+\newenvironment{corollary*}[1][]{\begin{accentbox*}[#1]{Corollary}{deepsea}}{\end{accentbox*}}
+\newenvironment{proof*}[1][]{\begin{accentbox*}[#1]{Proof}{pink}}{\end{accentbox*}}
+\newenvironment{example*}[1][]{\begin{accentbox*}[#1]{Example}{graylight}}{\end{accentbox*}}
+\newenvironment{exercise*}[1][]{\begin{accentbox*}[#1]{Exercise}{graylight}}{\end{accentbox*}}
+\newenvironment{question*}[1][]{\begin{accentbox*}[#1]{Question}{graylight}}{\end{accentbox*}}
+
+\newenvironment{remark}[1][]{\begin{accentbox*}[#1]{Remark}{redlight}}{\end{accentbox*}}
+\renewenvironment{note}[1][]{\begin{accentbox*}[#1]{Note}{redlight}}{\end{accentbox*}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -485,12 +515,30 @@
 }
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%  CODING %%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% options for listings
+\lstset{
+  language=Python,
+  basicstyle=\linespread{0.8}\ttfamily,
+  keywordstyle=\color{accent!125}\bfseries,
+  commentstyle=\color{gray!70}\itshape,
+  showstringspaces=false,
+  mathescape=true
+}
+
+% gray math in listing comments
+\newcommand{\gm}[1]{{\color{gray!75}{#1}}}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%   REFERENCES   %%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\addbibresource{bib/main.bib}
+% set bib resource in preamble.tex with
+% \addbibresource{bib/main.bib}
 
 \DeclareFieldFormat{title}{\mkbibquote{#1}} % applies quotes to title in all entry types (@Misc, was missing them)
 
@@ -505,12 +553,94 @@
   }
 }
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%   HYPHENATION   %%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\hyphenation{
+  sto-res
+  sha-red
+  ta-bleau
+  ta-bleaux
+}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%   COMMON SHORTCUTS   %%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%   COMMON COMMANDS   %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\newcommand{\ie}{\textit{i.e.}, }
-\newcommand{\eg}{\textit{e.g.}, }
+\newcommand{\ie}{\textit{i.e.}}
+\newcommand{\eg}{\textit{e.g.}}
 \newcommand{\st}{\textit{s.t.} }
+
+\newcommand{\wlogt}{w.l.o.g.\xspace}
+\newcommand{\Wlogt}{W.l.o.g.\xspace}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%   MATH COMMANDS   %%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\abs}[1]{\left\vert {#1} \right\vert}
+\newcommand{\norm}[1]{\lVert {#1} \rVert}
+\newcommand{\vars}[3]{{#1}_{#2},\ldots,{#1}_{#3}}
+
+\newcommand{\ifft}{\text{ iff }}
+\newcommand{\ift}{\text{if }}
+\newcommand{\andt}{\text{ and }}
+\newcommand{\ort}{\text{ or }}
+\newcommand{\fort}{\text{ for }}
+
+\newcommand{\tuple}[1]{(\,#1\,)}
+\newcommand{\tuplev}[1]{\langle\,#1\,\rangle}
+\newcommand{\set}[1]{\{\,#1\,\}}
+
+\newcommand{\bigtuple}[1]{\big(\,#1\,\big)}
+\newcommand{\Bigtuple}[1]{\Big(\,#1\,\Big)}
+\newcommand{\bigset}[1]{\big\{\,#1\,\big\}}
+\newcommand{\Bigset}[1]{\Big\{\,#1\,\Big\}}
+
+\renewcommand{\a}{\alpha}
+\renewcommand{\b}{\beta}
+\renewcommand{\d}{\delta}
+\newcommand{\e}{\varepsilon}
+\newcommand{\s}{\sigma}
+\newcommand{\p}{\varphi}
+\renewcommand{\t}{\tau}
+\renewcommand{\u}{\mu}
+\newcommand{\w}{\omega}
+\newcommand{\y}{\gamma}
+\newcommand{\D}{\Delta}
+\renewcommand{\S}{\Sigma}
+\renewcommand{\O}{\Omega}
+
+\newcommand{\A}{\mathcal{A}}
+\newcommand{\B}{\mathcal{B}}
+\newcommand{\C}{\mathcal{C}}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\G}{\mathcal{G}}
+\newcommand{\J}{\mathcal{J}}
+\renewcommand{\L}{\mathcal{L}}
+\renewcommand{\P}{\mathcal{P}}
+\newcommand{\T}{\mathcal{T}}
+\newcommand{\V}{\mathcal{V}}
+
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\QQ}{\mathbb{Q}}
+
+\newcommand{\true}{\textsc{true}\xspace}
+\newcommand{\false}{\textsc{false}\xspace}
+
+\DeclareMathOperator{\xor}{\oplus}
+\renewcommand{\emptyset}{\varnothing}
+\renewcommand{\min}{\text{min}}
+\renewcommand{\max}{\text{max}}
+% \renewcommand{\mod}{\text{ mod }}
+
+% Default math commands useful for spacing:
+% \; - a thick space
+% \: - a medium space
+% \, - a thin space
+% \! - a negative thin space
