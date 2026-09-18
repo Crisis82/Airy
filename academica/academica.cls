@@ -46,6 +46,7 @@
   \RequirePackage{hyperref} % management of hyperlinks, plus autogeneration of bookmarks
 \fi
 
+\RequirePackage[italian,english]{babel} % last language loaded is default one
 \RequirePackage{geometry} % sets page geometry style
 \RequirePackage{titlesec} % easily modify appereance of chapters and sections
 \RequirePackage{titletoc} % easily modify appereance of tableofcontents
@@ -192,13 +193,21 @@
 %%%%%%%%%%% PAGING %%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\geometry{
-    hcentering,
-    bindingoffset=.025\paperwidth,
-    outer=.075\paperwidth,
-    nofoot,nomarginpar,
-    vdivide={.08\paperheight,*,.06\paperheight}
-}
+\if@twoside
+  \geometry{
+      bindingoffset=.02\paperwidth,
+      inner=.095\paperwidth,
+      outer=.085\paperwidth,
+      nofoot,nomarginpar,
+      vdivide={.085\paperheight,*,.075\paperheight}
+  }
+\else
+  \geometry{
+      hcentering,
+      nofoot,nomarginpar,
+      vdivide={.08\paperheight,*,.06\paperheight}
+  }
+\fi
 
 % create storage for titles
 \newcommand{\chaptertitle}{}
@@ -262,7 +271,11 @@
 \renewcommand{\thempfootnote}{\fnsymbol{mpfootnote}}
 
 \def\acknowledgements{\chapter*{\textcolor{accentmedium}{Acknowledgements}}}
-\def\abstract{\chapter*{\textcolor{accentmedium}{Abstract}}\addcontentsline{toc}{chapter}{Abstract}}
+\newcommand{\abstract}{%
+  \@ifstar
+    {\chapter*{\textcolor{accentmedium}{Abstract}}}%
+    {\chapter{\textcolor{accentmedium}{Abstract}}\addcontentsline{toc}{chapter}{Abstract}}%
+}
 \def\summary{\chapter{\textcolor{accentmedium}{Summary}}}
 
 \newcommand{\keywords}[1]{%
@@ -610,17 +623,52 @@
 
 \contentsmargin{0cm}
 
-% Compute fixed chapter box width once (measure widest case: "Chapter 20")
-% Store in \acadChapBoxWd for reuse
-\newlength{\acadChapBoxWd}
-\newlength{\acadChapBoxInnWd}
-\AtBeginDocument{%
-  \sbox0{\Large\scshape\bfseries Chapter\ 20}%
-  \setlength{\acadChapBoxInnWd}{\wd0}%
-  % total box width = inner text + 2×horizontal padding (0.20cm each side)
-  \setlength{\acadChapBoxWd}{\acadChapBoxInnWd}%
-  \addtolength{\acadChapBoxWd}{0.40cm} % 2 × 0.20cm padding
+% TOC Chapter fixed-width box
+
+% chapter box lengths for numbered and non
+\newlength{\chapBoxWd}
+\newlength{\chapBoxWdNoNum}
+\newlength{\chapBoxInnWd}
+\newlength{\chapBoxInnWdNoNum}
+
+% check if appendix is present
+\newif\ifacad@appendixseen
+\acad@appendixseenfalse
+\let\acad@old@appendix\appendix
+\renewcommand{\appendix}{%
+  \acad@appendixseentrue
+  \immediate\write\@auxout{%
+    \string\gdef\string\lastChapNum{\the\value{chapter}}%
+  }%
+  \acad@old@appendix
 }
+
+% evaluate number of chapters
+\AtEndDocument{%
+  \ifacad@appendixseen\else
+    \immediate\write\@auxout{%
+      \string\gdef\string\lastChapNum{\the\value{chapter}}%
+    }%
+  \fi
+}
+% fallback for first compile
+\providecommand{\lastChapNum}{2}
+
+% box lengths for numbered chapters
+\AtBeginDocument{
+  \sbox0{\Large\scshape\bfseries Chapter\ \lastChapNum}
+  \setlength{\chapBoxInnWd}{\wd0}
+  \setlength{\chapBoxWd}{\chapBoxInnWd}
+  \addtolength{\chapBoxWd}{0.40cm}% 2 × 0.20cm padding
+}
+% box lengths for unnumbered chapters
+\AtBeginDocument{%
+  \sbox0{\Large\scshape\bfseries Chapter}%
+  \setlength{\chapBoxInnWdNoNum}{\wd0}%
+  \setlength{\chapBoxWdNoNum}{\chapBoxInnWdNoNum}%
+  \addtolength{\chapBoxWdNoNum}{0.40cm}% same padding convention as numbered box
+}
+
 \newlength{\tocChapRightEdge}
 \setlength{\tocChapRightEdge}{-0.20cm}
 
@@ -641,24 +689,33 @@
 \titlecontents{chapter}[5pc]
 {
   \addvspace{30pt}
-  \begin{tikzpicture}[overlay]
-    \pgfmathsetmacro{\tocBoxW}{\the\acadChapBoxWd/28.3465}%
-    \pgfmathsetmacro{\tocRcm}{\the\tocChapRightEdge/28.3465}%
-    \draw[fill=accent,draw=accent,rounded corners]
-      (\tocRcm cm - \tocBoxW cm, -0.2) rectangle (\tocRcm cm, 0.58);
-    \pgftext[left, x=\tocRcm cm - \tocBoxW cm + 0.20cm, y=0.2cm]{%
-      \textcolor{white}{%
-        \makebox[\acadChapBoxInnWd][l]{%
-          \Large\scshape\bfseries Chapter%
-          \ifx\thecontentslabel\@empty
-            \hfill
-          \else
-            \hfill\thecontentslabel
-          \fi
+  \ifx\thecontentslabel\@empty
+    % starred chapters (no number)
+    \begin{tikzpicture}[overlay]
+      \pgfmathsetmacro{\tocBoxW}{\the\chapBoxWdNoNum/28.3465}%
+      \pgfmathsetmacro{\tocRcm}{\the\tocChapRightEdge/28.3465}%
+      \draw[fill=accent,draw=accent,rounded corners]
+        (\tocRcm cm - \tocBoxW cm, -0.2) rectangle (\tocRcm cm, 0.58);
+      \pgftext[left, x=\tocRcm cm - \tocBoxW cm + 0.20cm, y=0.2cm]{%
+        \textcolor{white}{\Large\scshape\bfseries Chapter}%
+      }
+    \end{tikzpicture}\large\scshape\bfseries
+  \else
+    % numbered chapters
+    \begin{tikzpicture}[overlay]
+      \pgfmathsetmacro{\tocBoxW}{\the\chapBoxWd/28.3465}%
+      \pgfmathsetmacro{\tocRcm}{\the\tocChapRightEdge/28.3465}%
+      \draw[fill=accent,draw=accent,rounded corners]
+        (\tocRcm cm - \tocBoxW cm, -0.2) rectangle (\tocRcm cm, 0.58);
+      \pgftext[left, x=\tocRcm cm - \tocBoxW cm + 0.20cm, y=0.2cm]{%
+        \textcolor{white}{%
+          \makebox[\chapBoxInnWd][l]{%
+            \Large\scshape\bfseries Chapter\hfill\thecontentslabel%
+          }%
         }%
-      }%
-    }
-  \end{tikzpicture}\large\scshape\bfseries
+      }
+    \end{tikzpicture}\large\scshape\bfseries
+  \fi
 }
 {}
 {}
@@ -863,6 +920,8 @@
   sha-red
   ta-bleau
   ta-bleaux
+  block-chain
+  para-digm
 }
 
 
@@ -930,6 +989,10 @@
 \newcommand{\NN}{\mathbb{N}}
 \newcommand{\RR}{\mathbb{R}}
 \newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\FF}{\mathbb{F}}
+\newcommand{\KK}{\mathbb{K}}
+\newcommand{\VV}{\mathbb{V}}
+\newcommand{\ZZ}{\mathbb{Z}}
 
 \newcommand{\true}{\textsc{true}\xspace}
 \newcommand{\false}{\textsc{false}\xspace}
