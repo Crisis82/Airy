@@ -342,6 +342,9 @@
 \newcounter{question}
 
 % definition of \autoref name
+\renewcommand{\chapterautorefname}{Chapter}
+\renewcommand{\sectionautorefname}{Section}
+\renewcommand{\subsectionautorefname}{Subsection}
 \newcommand{\definitionautorefname}{Definition}
 \renewcommand{\theoremautorefname}{Theorem}
 \newcommand{\postulateautorefname}{Postulate}
