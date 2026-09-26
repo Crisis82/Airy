@@ -924,7 +924,10 @@
 \def\references{
   \chapter*{\textcolor{accentmedium}{Bibliography}}\addcontentsline{toc}{chapter}{Bibliography}
   % \nocite{*} % adds all bibliography entries, even not cited
-  \printbibliography[heading=none]
+  \begingroup % need to make stretch apply only to bibliography
+    \setlength{\emergencystretch}{1em}
+    \printbibliography[heading=none]
+  \endgroup
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%   HYPHENATION   %%%%%%%
