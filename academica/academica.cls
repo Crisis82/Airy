@@ -89,8 +89,9 @@
 \RequirePackage{listings} % for block of codes
 \RequirePackage{adjustbox} % automatically adjust width of figure/tikz
 \RequirePackage{xspace} % for space only if no punctuation follows
-% \RequirePackage{enumitem} % improved control over lists
-% \RequirePackage{xurl} % url hyphenation
+\RequirePackage{xurl} % url hyphenation
+\RequirePackage{noindentafter} % remove indentation after specified environments
+\RequirePackage{enumitem} % improved control over lists
 
 
 
@@ -459,6 +460,17 @@
   showstringspaces=false,
   mathescape=true
 }
+
+% shorter captions
+\captionsetup{
+  width=0.7\textwidth,
+  justification=justified,
+}
+
+% noindent option
+\NoIndentAfterEnv{figure}
+\NoIndentAfterEnv{table}
+\NoIndentAfterEnv{lstlisting}
 
 % gray math in listing comments
 \newcommand{\gm}[1]{{\color{gray!75}{#1}}}
@@ -925,6 +937,7 @@
   ta-bleaux
   block-chain
   para-digm
+  with-in
 }
 
 
@@ -935,7 +948,7 @@
 \newcommand{\ie}{\textit{i.e.}}
 \newcommand{\eg}{\textit{e.g.}}
 \newcommand{\st}{\textit{s.t.} }
-
+\newcommand{\wrt}{w.r.t.\xspace}
 \newcommand{\wlogt}{w.l.o.g.\xspace}
 \newcommand{\Wlogt}{W.l.o.g.\xspace}
 
@@ -984,9 +997,11 @@
 \newcommand{\G}{\mathcal{G}}
 \newcommand{\J}{\mathcal{J}}
 \renewcommand{\L}{\mathcal{L}}
+\newcommand{\N}{\mathcal{N}}
 \renewcommand{\P}{\mathcal{P}}
 \newcommand{\T}{\mathcal{T}}
 \newcommand{\V}{\mathcal{V}}
+\newcommand{\W}{\mathcal{W}}
 
 \newcommand{\CC}{\mathbb{C}}
 \newcommand{\NN}{\mathbb{N}}
