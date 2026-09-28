@@ -42,6 +42,7 @@
 \ifacademica@pdfa
   \RequirePackage[a-1b]{pdfx} % generates pdfa output
   \RequirePackage[pdfa]{hyperref}
+  \let\Gread@transgrouptrue\Gread@transgroupfalse % patches lualatex from enclosing images in a transparent group, not compatible with PFD/A-1b
 \else
   \RequirePackage{hyperref} % management of hyperlinks, plus autogeneration of bookmarks
 \fi
