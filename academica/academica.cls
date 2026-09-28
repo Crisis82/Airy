@@ -83,8 +83,6 @@
 \RequirePackage{tabularx} % improved tabular
 % \RequirePackage{array} % other tabular improvements like custom widths
 
-\RequirePackage[figure,table]{totalcount} % get total occurences of figures and tables (used in TOC)
-
 \RequirePackage{cancel} % for cancelling our math
 \RequirePackage{listings} % for block of codes
 \RequirePackage{adjustbox} % automatically adjust width of figure/tikz
@@ -93,6 +91,9 @@
 \RequirePackage{noindentafter} % remove indentation after specified environments
 \RequirePackage{enumitem} % improved control over lists
 
+\RequirePackage[figure,table,lstlisting]{totalcount} % get total occurences of figures, tables and listings (used in TOC)
+
+% \RequirePackage{showframe} % to check impagination frames
 
 
 %%%%%%%%%%%%%%%%%%%%%%%
@@ -458,7 +459,9 @@
   keywordstyle=\color{accent!125}\bfseries,
   commentstyle=\color{gray!70}\itshape,
   showstringspaces=false,
-  mathescape=true
+  mathescape=true,
+  % breaklines=true,
+  % breakatwhitespace=false
 }
 
 % shorter captions
@@ -873,40 +876,74 @@
 {\hfill\small \thecontentspage}
 []
 
+% edit appereance of `lstlisting` inside toc
+\titlecontents{lstlisting}[5pc]
+{\addvspace{2pt}}
+{\contentslabel[\thecontentslabel]{2pc}}
+{}
+{\hfill\small \thecontentspage}
+[]
+
+% --- Rounded-left title box for TOC / LOF / LOT --------------------------
+\newlength{\tocboxlpad}  \setlength{\tocboxlpad}{1.5em}  % padding left of the text
+\newlength{\tocboxvup}   \setlength{\tocboxvup}{1cm}     % box extent above baseline
+\newlength{\tocboxvdown} \setlength{\tocboxvdown}{0.65cm}% box extent below baseline
+\newlength{\tocboxrad}   \setlength{\tocboxrad}{6pt}
+\newlength{\tocboxtextw}
+\newlength{\tocboxbleed}                                 % distance text-edge -> paper edge
+
+\newcommand{\academicatocfont}{\Huge\scshape\bfseries}
+
+\newcommand{\academicatoctitle}[1]{%
+  \settowidth{\tocboxtextw}{{\academicatocfont #1}}%
+  % right margin of the current page (text block edge -> paper edge)
+  \setlength{\tocboxbleed}{\dimexpr\paperwidth-\textwidth-\hoffset-1in-\oddsidemargin\relax}%
+  \begin{tikzpicture}[overlay]
+    % Box: left edge derived from text width, right edge runs past the paper edge.
+    \path[fill=accent, draw=accent, rounded corners=\tocboxrad]
+      (\textwidth-\tocboxtextw-\tocboxlpad, -\tocboxvdown)
+      rectangle
+      (\textwidth+\tocboxbleed+\tocboxrad, \tocboxvup);
+    % Text: right-aligned to the text-block edge (= page-number edge)
+    \node[anchor=base east, inner sep=0pt, text=white]
+      at (\textwidth, 0) {\academicatocfont #1};
+  \end{tikzpicture}%
+}
+
 \renewcommand{\listoffigures}{
-	\chapter*{
-	  \vspace*{-20\p@}
-	  \begin{tikzpicture}[overlay]
-		  \draw[fill=accent,draw=accent,rounded corners] (10,-0.65) rectangle (20,1);
-      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\scshape\bfseries\textcolor{white}{List of Figures}}
-	  \end{tikzpicture}
-  }
+	\chapter*{%
+	  \vspace*{-20\p@}%
+    \academicatoctitle{List of Figures}%
+  }%
   \@starttoc{lof}
 }
 
 \renewcommand{\listoftables}{
-	\chapter*{
-	  \vspace*{-20\p@}
-	  \begin{tikzpicture}[overlay]
-		  \draw[fill=accent,draw=accent,rounded corners] (10.5,-0.65) rectangle (20,1);
-      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\scshape\bfseries\textcolor{white}{List of Tables}}
-	  \end{tikzpicture}
-  }
+	\chapter*{%
+	  \vspace*{-20\p@}%
+    \academicatoctitle{List of Tables}%
+  }%
   \@starttoc{lot}
+}
+
+\newcommand{\listoflistings}{
+	\chapter*{%
+    \vspace*{-20\p@}%
+    \academicatoctitle{List of Listings}%
+  }%
+  \@starttoc{lol}
 }
 
 % move contents title on the right then prints TOC with figures and tables
 \renewcommand{\tableofcontents}{
-	\chapter*{
-	  \vspace*{-20\p@}
-	  \begin{tikzpicture}[overlay]
-		  \draw[fill=accent,draw=accent,rounded corners] (12.2,-0.65) rectangle (20,1);
-      \pgftext[right,x=16.7cm,y=0.2cm]{\Huge\scshape\bfseries\textcolor{white}{\contentsname}}
-	  \end{tikzpicture}
-  }
+	\chapter*{%
+	  \vspace*{-20\p@}%
+    \academicatoctitle{\contentsname}%
+  }%
 	\@starttoc{toc}
   \iftotalfigures\listoffigures\fi
   \iftotaltables\listoftables\fi
+  \iftotallstlistings\listoflistings\fi
   \clearpage
 }
 
