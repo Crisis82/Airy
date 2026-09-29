@@ -176,15 +176,17 @@
 \colorlet{graymid}{gray!75}
 \definecolor{graydark}{HTML}{525252}
 
-\definecolor{lilla}{HTML}{B4B5EE}
+\definecolor{cyan}{HTML}{ADE2FA}
 \definecolor{blue}{HTML}{98CEF3}
 \definecolor{deepsea}{HTML}{123499}
+\definecolor{lilla}{HTML}{B4B5EE}
+\definecolor{magenta}{HTML}{F077CE}
 \definecolor{pink}{HTML}{F7ABDC}
 \definecolor{red}{HTML}{E95678}
 \colorlet{redlight}{red!60}
-\definecolor{green}{HTML}{3FDAA4}
 \definecolor{orange}{HTML}{F09483}
 \definecolor{yellow}{HTML}{FAE3B0}
+\definecolor{green}{HTML}{3FDAA4}
 
 \colorlet{accent}{lilla!160}
 \colorlet{accentlight}{lilla}
